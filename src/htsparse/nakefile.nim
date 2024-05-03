@@ -202,6 +202,11 @@ proc janetCompile*() =
     some Url("https://raw.githubusercontent.com/GrayJack/tree-sitter-janet/master/src/scanner.c"),
   )
 
+proc ungrammarCompile*() =
+  build("ungrammar",
+    Url("https://raw.githubusercontent.com/tree-sitter-grammars/tree-sitter-ungrammar/main/grammar.js"),
+  )
+
 proc clojureCompile*() =
   # https://github.com/sogaiu/tree-sitter-clojure
   build(
@@ -557,6 +562,7 @@ type
     lRegex            = "regex"
     lMake             = "make"
     lJanet            = "janet"
+    lUngrammar        = "ungrammar"
 
     lKotlin           = "kotlin"
     lSystemVerilog    = "verilog"
@@ -609,6 +615,7 @@ proc compile*(lang: Lang) =
     lKotlin: kotlinCompile,
     lGraphql: graphqlCompile,
     lJanet: janetCompile,
+    lUngrammar: ungrammarCompile,
 
     lElisp: elispCompile,
     lMake: makeCompile,
