@@ -188,7 +188,7 @@ proc treeRepr*(node: TsUngrammarNode, str: string): string =
 
 import
   hmisc / wrappers/treesitter_core
-let ungrammarGrammar*: array[UngrammarNodeKind, HtsRule[UngrammarNodeKind]] = block:
+let ungrammarGrammarRules*: array[UngrammarNodeKind, HtsRule[UngrammarNodeKind]] = block:
                                                                                 var rules: array[UngrammarNodeKind, HtsRule[UngrammarNodeKind]]
                                                                                 type
                                                                                   K = UngrammarNodeKind
