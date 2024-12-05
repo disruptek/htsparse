@@ -209,7 +209,7 @@ proc parseUngrammarString*(str: string, unnamed: bool = false): UngrammarNode =
 
 import
   hmisc / wrappers/treesitter_core
-let ungrammarGrammarRules*: array[UngrammarNodeKind, HtsRule[UngrammarNodeKind]] = block:
+let ungrammarGrammar*: array[UngrammarNodeKind, HtsRule[UngrammarNodeKind]] = block:
                                                                                 var rules: array[UngrammarNodeKind, HtsRule[UngrammarNodeKind]]
                                                                                 type
                                                                                   K = UngrammarNodeKind

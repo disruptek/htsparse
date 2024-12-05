@@ -1,5 +1,5 @@
 {.compile: "lua_parser.c".}
-{.compile: "lua_scanner.cc".}
+{.compile: "lua_scanner.c".}
 {.passl: "-ltree-sitter".}
 {.passl: "-lstdc++".}
 

@@ -6,238 +6,286 @@ import
 export treesitter
 type
   LuaNodeKind* = enum
-    luaArguments                  ## arguments
-    luaBinaryOperation            ## binary_operation
-    luaConditionExpression        ## condition_expression
-    luaDoStatement                ## do_statement
-    luaElse                       ## else
-    luaElseif                     ## elseif
-    luaExpression                 ## expression
-    luaField                      ## field
-    luaFieldExpression            ## field_expression
-    luaForInStatement             ## for_in_statement
-    luaForStatement               ## for_statement
-    luaFunction                   ## function
-    luaFunctionCall               ## function_call
-    luaFunctionDefinition         ## function_definition
-    luaFunctionName               ## function_name
-    luaFunctionNameField          ## function_name_field
-    luaGlobalVariable             ## global_variable
-    luaGotoStatement              ## goto_statement
-    luaIfStatement                ## if_statement
-    luaLabelStatement             ## label_statement
-    luaLocalFunction              ## local_function
-    luaLocalVariableDeclaration   ## local_variable_declaration
-    luaLoopExpression             ## loop_expression
-    luaParameters                 ## parameters
-    luaProgram                    ## program
-    luaRepeatStatement            ## repeat_statement
-    luaReturnStatement            ## return_statement
-    luaTable                      ## table
-    luaUnaryOperation             ## unary_operation
-    luaVariableDeclaration        ## variable_declaration
-    luaVariableDeclarator         ## variable_declarator
-    luaWhileStatement             ## while_statement
-    luaHashTok                    ## #
-    luaPercentTok                 ## %
-    luaAmpersandTok               ## &
-    luaLParTok                    ## (
-    luaRParTok                    ## )
-    luaAsteriskTok                ## *
-    luaPlusTok                    ## +
-    luaCommaTok                   ## ,
-    luaMinusTok                   ## -
-    luaDotTok                     ## .
-    luaDoubleDotTok               ## ..
-    luaSlashTok                   ## /
-    luaDoubleSlashTok             ## //
-    luaColonTok                   ## :
-    luaDoubleColonTok             ## ::
-    luaSemicolonTok               ## ;
-    luaLessThanTok                ## <
-    luaDoubleLessThanTok          ## <<
-    luaLessThanEqualTok           ## <=
-    luaEqualTok                   ## =
-    luaDoubleEqualTok             ## ==
-    luaGreaterThanTok             ## >
-    luaGreaterThanEqualTok        ## >=
-    luaDoubleGreaterThanTok       ## >>
-    luaLBrackTok                  ## [
-    luaRBrackTok                  ## ]
-    luaAccentTok                  ## ^
-    luaHidGTok                    ## _G
-    luaHidVERSIONTok              ## _VERSION
-    luaAndTok                     ## and
-    luaBreakStatement             ## break_statement
-    luaComment                    ## comment
-    luaDoTok                      ## do
-    luaElseTok                    ## else
-    luaElseifTok                  ## elseif
-    luaEndTok                     ## end
-    luaFalse                      ## false
-    luaForTok                     ## for
-    luaFunctionTok                ## function
-    luaGotoTok                    ## goto
-    luaIdentifier                 ## identifier
-    luaIfTok                      ## if
-    luaInTok                      ## in
-    luaLocalTok                   ## local
-    luaMethod                     ## method
-    luaNext                       ## next
-    luaNil                        ## nil
-    luaNotTok                     ## not
-    luaNumber                     ## number
-    luaOrTok                      ## or
-    luaPropertyIdentifier         ## property_identifier
-    luaRepeatTok                  ## repeat
-    luaReturnTok                  ## return
-    luaSelf                       ## self
-    luaSpread                     ## spread
-    luaString                     ## string
-    luaThenTok                    ## then
-    luaTrue                       ## true
-    luaUntilTok                   ## until
-    luaWhileTok                   ## while
-    luaLCurlyTok                  ## {
-    luaPipeTok                    ## |
-    luaRCurlyTok                  ## }
-    luaTildeTok                   ## ~
-    luaTildeEqualTok              ## ~=
-    luaHidFieldSep                ## _field_sep
-    luaHidExpression              ## _expression
-    luaLocalFunctionStatement     ## local_function_statement
-    luaHidVariableDeclarator      ## _variable_declarator
-    luaFunctionCallStatement      ## function_call_statement
-    luaHidPrefix                  ## _prefix
-    luaFunctionStatement          ## function_statement
-    luaHidLoopExpression          ## _loop_expression
-    luaHidStatement               ## _statement
-    luaHidFieldSequence           ## _field_sequence
-    luaHidFunctionBody            ## _function_body
-    luaHidInLoopExpression        ## _in_loop_expression
-    luaHidLocalVariableDeclarator ## _local_variable_declarator
-    luaHidEmptyStatement          ## _empty_statement
-    luaSyntaxError                ## Tree-sitter parser syntax error
+    luaDeclaration                          ## declaration
+    luaExpression                           ## expression
+    luaStatement                            ## statement
+    luaVariable                             ## variable
+    luaArguments                            ## arguments
+    luaAssignmentStatement                  ## assignment_statement
+    luaAttribute                            ## attribute
+    luaBinaryExpression                     ## binary_expression
+    luaBlock                                ## block
+    luaBracketIndexExpression               ## bracket_index_expression
+    luaChunk                                ## chunk
+    luaComment                              ## comment
+    luaDoStatement                          ## do_statement
+    luaDotIndexExpression                   ## dot_index_expression
+    luaElseStatement                        ## else_statement
+    luaElseifStatement                      ## elseif_statement
+    luaEmptyStatement                       ## empty_statement
+    luaExpressionList                       ## expression_list
+    luaField                                ## field
+    luaForGenericClause                     ## for_generic_clause
+    luaForNumericClause                     ## for_numeric_clause
+    luaForStatement                         ## for_statement
+    luaFunctionCall                         ## function_call
+    luaFunctionDeclaration                  ## function_declaration
+    luaFunctionDefinition                   ## function_definition
+    luaGotoStatement                        ## goto_statement
+    luaIfStatement                          ## if_statement
+    luaLabelStatement                       ## label_statement
+    luaMethodIndexExpression                ## method_index_expression
+    luaParameters                           ## parameters
+    luaParenthesizedExpression              ## parenthesized_expression
+    luaRepeatStatement                      ## repeat_statement
+    luaReturnStatement                      ## return_statement
+    luaString                               ## string
+    luaStringContent                        ## string_content
+    luaTableConstructor                     ## table_constructor
+    luaUnaryExpression                      ## unary_expression
+    luaVariableDeclaration                  ## variable_declaration
+    luaVariableList                         ## variable_list
+    luaWhileStatement                       ## while_statement
+    luaQuoteTok                             ## "
+    luaHashTok                              ## #
+    luaPercentTok                           ## %
+    luaAmpersandTok                         ## &
+    luaApostropheTok                        ## '
+    luaLParTok                              ## (
+    luaRParTok                              ## )
+    luaAsteriskTok                          ## *
+    luaPlusTok                              ## +
+    luaCommaTok                             ## ,
+    luaMinusTok                             ## -
+    luaDoubleMinusTok                       ## --
+    luaDotTok                               ## .
+    luaDoubleDotTok                         ## ..
+    luaSlashTok                             ## /
+    luaDoubleSlashTok                       ## //
+    luaColonTok                             ## :
+    luaDoubleColonTok                       ## ::
+    luaSemicolonTok                         ## ;
+    luaLessThanTok                          ## <
+    luaDoubleLessThanTok                    ## <<
+    luaLessThanEqualTok                     ## <=
+    luaEqualTok                             ## =
+    luaDoubleEqualTok                       ## ==
+    luaGreaterThanTok                       ## >
+    luaGreaterThanEqualTok                  ## >=
+    luaDoubleGreaterThanTok                 ## >>
+    luaLBrackTok                            ## [
+    luaDoubleLBrackTok                      ## [[
+    luaRBrackTok                            ## ]
+    luaDoubleRBrackTok                      ## ]]
+    luaAccentTok                            ## ^
+    luaAndTok                               ## and
+    luaBreakStatement                       ## break_statement
+    luaCommentContent                       ## comment_content
+    luaDoTok                                ## do
+    luaElseTok                              ## else
+    luaElseifTok                            ## elseif
+    luaEndTok                               ## end
+    luaEscapeSequence                       ## escape_sequence
+    luaFalse                                ## false
+    luaForTok                               ## for
+    luaFunctionTok                          ## function
+    luaGotoTok                              ## goto
+    luaHashBangLine                         ## hash_bang_line
+    luaIdentifier                           ## identifier
+    luaIfTok                                ## if
+    luaInTok                                ## in
+    luaLocalTok                             ## local
+    luaNil                                  ## nil
+    luaNotTok                               ## not
+    luaNumber                               ## number
+    luaOrTok                                ## or
+    luaRepeatTok                            ## repeat
+    luaReturnTok                            ## return
+    luaThenTok                              ## then
+    luaTrue                                 ## true
+    luaUntilTok                             ## until
+    luaVarargExpression                     ## vararg_expression
+    luaWhileTok                             ## while
+    luaLCurlyTok                            ## {
+    luaPipeTok                              ## |
+    luaRCurlyTok                            ## }
+    luaTildeTok                             ## ~
+    luaTildeEqualTok                        ## ~=
+    luaHidBlockCommentEnd                   ## _block_comment_end
+    luaHidDoublequoteStringContent          ## _doublequote_string_content
+    luaHidExpressionList                    ## _expression_list
+    luaHidLocalFunctionDeclaration          ## _local_function_declaration
+    luaHidParameterList                     ## _parameter_list
+    luaHidBlockStringStart                  ## _block_string_start
+    luaHidNameList                          ## _name_list
+    luaHidPrefixExpression                  ## _prefix_expression
+    luaHidFieldSep                          ## _field_sep
+    luaHidFunctionName                      ## _function_name
+    luaHidBlockCommentStart                 ## _block_comment_start
+    luaHidFunctionNameMethodIndexExpression ## _function_name_method_index_expression
+    luaHidAttrib                            ## _attrib
+    luaHidVariableAssignmentVarlist         ## _variable_assignment_varlist
+    luaHidAttNameList                       ## _att_name_list
+    luaHidFunctionNamePrefixExpression      ## _function_name_prefix_expression
+    luaHidQuoteString                       ## _quote_string
+    luaHidBlock                             ## _block
+    luaHidBlockString                       ## _block_string
+    luaHidFunctionNameDotIndexExpression    ## _function_name_dot_index_expression
+    luaHidFieldList                         ## _field_list
+    luaHidBlockStringEnd                    ## _block_string_end
+    luaHidBlockCommentContent               ## _block_comment_content
+    luaHidSinglequoteStringContent          ## _singlequote_string_content
+    luaHidLocalVariableAssignment           ## _local_variable_assignment
+    luaHidFunctionBody                      ## _function_body
+    luaHidVariableAssignmentExplist         ## _variable_assignment_explist
+    luaHidBlockStringContent                ## _block_string_content
+    luaSyntaxError                          ## Tree-sitter parser syntax error
 
 proc strRepr*(kind: LuaNodeKind): string =
   case kind:
-    of luaArguments:                  "arguments"
-    of luaBinaryOperation:            "binary_operation"
-    of luaConditionExpression:        "condition_expression"
-    of luaDoStatement:                "do_statement"
-    of luaElse:                       "else"
-    of luaElseif:                     "elseif"
-    of luaExpression:                 "expression"
-    of luaField:                      "field"
-    of luaFieldExpression:            "field_expression"
-    of luaForInStatement:             "for_in_statement"
-    of luaForStatement:               "for_statement"
-    of luaFunction:                   "function"
-    of luaFunctionCall:               "function_call"
-    of luaFunctionDefinition:         "function_definition"
-    of luaFunctionName:               "function_name"
-    of luaFunctionNameField:          "function_name_field"
-    of luaGlobalVariable:             "global_variable"
-    of luaGotoStatement:              "goto_statement"
-    of luaIfStatement:                "if_statement"
-    of luaLabelStatement:             "label_statement"
-    of luaLocalFunction:              "local_function"
-    of luaLocalVariableDeclaration:   "local_variable_declaration"
-    of luaLoopExpression:             "loop_expression"
-    of luaParameters:                 "parameters"
-    of luaProgram:                    "program"
-    of luaRepeatStatement:            "repeat_statement"
-    of luaReturnStatement:            "return_statement"
-    of luaTable:                      "table"
-    of luaUnaryOperation:             "unary_operation"
-    of luaVariableDeclaration:        "variable_declaration"
-    of luaVariableDeclarator:         "variable_declarator"
-    of luaWhileStatement:             "while_statement"
-    of luaHashTok:                    "#"
-    of luaPercentTok:                 "%"
-    of luaAmpersandTok:               "&"
-    of luaLParTok:                    "("
-    of luaRParTok:                    ")"
-    of luaAsteriskTok:                "*"
-    of luaPlusTok:                    "+"
-    of luaCommaTok:                   ","
-    of luaMinusTok:                   "-"
-    of luaDotTok:                     "."
-    of luaDoubleDotTok:               ".."
-    of luaSlashTok:                   "/"
-    of luaDoubleSlashTok:             "//"
-    of luaColonTok:                   ":"
-    of luaDoubleColonTok:             "::"
-    of luaSemicolonTok:               ";"
-    of luaLessThanTok:                "<"
-    of luaDoubleLessThanTok:          "<<"
-    of luaLessThanEqualTok:           "<="
-    of luaEqualTok:                   "="
-    of luaDoubleEqualTok:             "=="
-    of luaGreaterThanTok:             ">"
-    of luaGreaterThanEqualTok:        ">="
-    of luaDoubleGreaterThanTok:       ">>"
-    of luaLBrackTok:                  "["
-    of luaRBrackTok:                  "]"
-    of luaAccentTok:                  "^"
-    of luaHidGTok:                    "_G"
-    of luaHidVERSIONTok:              "_VERSION"
-    of luaAndTok:                     "and"
-    of luaBreakStatement:             "break_statement"
-    of luaComment:                    "comment"
-    of luaDoTok:                      "do"
-    of luaElseTok:                    "else"
-    of luaElseifTok:                  "elseif"
-    of luaEndTok:                     "end"
-    of luaFalse:                      "false"
-    of luaForTok:                     "for"
-    of luaFunctionTok:                "function"
-    of luaGotoTok:                    "goto"
-    of luaIdentifier:                 "identifier"
-    of luaIfTok:                      "if"
-    of luaInTok:                      "in"
-    of luaLocalTok:                   "local"
-    of luaMethod:                     "method"
-    of luaNext:                       "next"
-    of luaNil:                        "nil"
-    of luaNotTok:                     "not"
-    of luaNumber:                     "number"
-    of luaOrTok:                      "or"
-    of luaPropertyIdentifier:         "property_identifier"
-    of luaRepeatTok:                  "repeat"
-    of luaReturnTok:                  "return"
-    of luaSelf:                       "self"
-    of luaSpread:                     "spread"
-    of luaString:                     "string"
-    of luaThenTok:                    "then"
-    of luaTrue:                       "true"
-    of luaUntilTok:                   "until"
-    of luaWhileTok:                   "while"
-    of luaLCurlyTok:                  "{"
-    of luaPipeTok:                    "|"
-    of luaRCurlyTok:                  "}"
-    of luaTildeTok:                   "~"
-    of luaTildeEqualTok:              "~="
-    of luaHidFieldSep:                "_field_sep"
-    of luaHidExpression:              "_expression"
-    of luaLocalFunctionStatement:     "local_function_statement"
-    of luaHidVariableDeclarator:      "_variable_declarator"
-    of luaFunctionCallStatement:      "function_call_statement"
-    of luaHidPrefix:                  "_prefix"
-    of luaFunctionStatement:          "function_statement"
-    of luaHidLoopExpression:          "_loop_expression"
-    of luaHidStatement:               "_statement"
-    of luaHidFieldSequence:           "_field_sequence"
-    of luaHidFunctionBody:            "_function_body"
-    of luaHidInLoopExpression:        "_in_loop_expression"
-    of luaHidLocalVariableDeclarator: "_local_variable_declarator"
-    of luaHidEmptyStatement:          "_empty_statement"
-    of luaSyntaxError:                "ERROR"
+    of luaDeclaration:                          "declaration"
+    of luaExpression:                           "expression"
+    of luaStatement:                            "statement"
+    of luaVariable:                             "variable"
+    of luaArguments:                            "arguments"
+    of luaAssignmentStatement:                  "assignment_statement"
+    of luaAttribute:                            "attribute"
+    of luaBinaryExpression:                     "binary_expression"
+    of luaBlock:                                "block"
+    of luaBracketIndexExpression:               "bracket_index_expression"
+    of luaChunk:                                "chunk"
+    of luaComment:                              "comment"
+    of luaDoStatement:                          "do_statement"
+    of luaDotIndexExpression:                   "dot_index_expression"
+    of luaElseStatement:                        "else_statement"
+    of luaElseifStatement:                      "elseif_statement"
+    of luaEmptyStatement:                       "empty_statement"
+    of luaExpressionList:                       "expression_list"
+    of luaField:                                "field"
+    of luaForGenericClause:                     "for_generic_clause"
+    of luaForNumericClause:                     "for_numeric_clause"
+    of luaForStatement:                         "for_statement"
+    of luaFunctionCall:                         "function_call"
+    of luaFunctionDeclaration:                  "function_declaration"
+    of luaFunctionDefinition:                   "function_definition"
+    of luaGotoStatement:                        "goto_statement"
+    of luaIfStatement:                          "if_statement"
+    of luaLabelStatement:                       "label_statement"
+    of luaMethodIndexExpression:                "method_index_expression"
+    of luaParameters:                           "parameters"
+    of luaParenthesizedExpression:              "parenthesized_expression"
+    of luaRepeatStatement:                      "repeat_statement"
+    of luaReturnStatement:                      "return_statement"
+    of luaString:                               "string"
+    of luaStringContent:                        "string_content"
+    of luaTableConstructor:                     "table_constructor"
+    of luaUnaryExpression:                      "unary_expression"
+    of luaVariableDeclaration:                  "variable_declaration"
+    of luaVariableList:                         "variable_list"
+    of luaWhileStatement:                       "while_statement"
+    of luaQuoteTok:                             "\""
+    of luaHashTok:                              "#"
+    of luaPercentTok:                           "%"
+    of luaAmpersandTok:                         "&"
+    of luaApostropheTok:                        "\'"
+    of luaLParTok:                              "("
+    of luaRParTok:                              ")"
+    of luaAsteriskTok:                          "*"
+    of luaPlusTok:                              "+"
+    of luaCommaTok:                             ","
+    of luaMinusTok:                             "-"
+    of luaDoubleMinusTok:                       "--"
+    of luaDotTok:                               "."
+    of luaDoubleDotTok:                         ".."
+    of luaSlashTok:                             "/"
+    of luaDoubleSlashTok:                       "//"
+    of luaColonTok:                             ":"
+    of luaDoubleColonTok:                       "::"
+    of luaSemicolonTok:                         ";"
+    of luaLessThanTok:                          "<"
+    of luaDoubleLessThanTok:                    "<<"
+    of luaLessThanEqualTok:                     "<="
+    of luaEqualTok:                             "="
+    of luaDoubleEqualTok:                       "=="
+    of luaGreaterThanTok:                       ">"
+    of luaGreaterThanEqualTok:                  ">="
+    of luaDoubleGreaterThanTok:                 ">>"
+    of luaLBrackTok:                            "["
+    of luaDoubleLBrackTok:                      "[["
+    of luaRBrackTok:                            "]"
+    of luaDoubleRBrackTok:                      "]]"
+    of luaAccentTok:                            "^"
+    of luaAndTok:                               "and"
+    of luaBreakStatement:                       "break_statement"
+    of luaCommentContent:                       "comment_content"
+    of luaDoTok:                                "do"
+    of luaElseTok:                              "else"
+    of luaElseifTok:                            "elseif"
+    of luaEndTok:                               "end"
+    of luaEscapeSequence:                       "escape_sequence"
+    of luaFalse:                                "false"
+    of luaForTok:                               "for"
+    of luaFunctionTok:                          "function"
+    of luaGotoTok:                              "goto"
+    of luaHashBangLine:                         "hash_bang_line"
+    of luaIdentifier:                           "identifier"
+    of luaIfTok:                                "if"
+    of luaInTok:                                "in"
+    of luaLocalTok:                             "local"
+    of luaNil:                                  "nil"
+    of luaNotTok:                               "not"
+    of luaNumber:                               "number"
+    of luaOrTok:                                "or"
+    of luaRepeatTok:                            "repeat"
+    of luaReturnTok:                            "return"
+    of luaThenTok:                              "then"
+    of luaTrue:                                 "true"
+    of luaUntilTok:                             "until"
+    of luaVarargExpression:                     "vararg_expression"
+    of luaWhileTok:                             "while"
+    of luaLCurlyTok:                            "{"
+    of luaPipeTok:                              "|"
+    of luaRCurlyTok:                            "}"
+    of luaTildeTok:                             "~"
+    of luaTildeEqualTok:                        "~="
+    of luaHidBlockCommentEnd:                   "_block_comment_end"
+    of luaHidDoublequoteStringContent:          "_doublequote_string_content"
+    of luaHidExpressionList:                    "_expression_list"
+    of luaHidLocalFunctionDeclaration:          "_local_function_declaration"
+    of luaHidParameterList:                     "_parameter_list"
+    of luaHidBlockStringStart:                  "_block_string_start"
+    of luaHidNameList:                          "_name_list"
+    of luaHidPrefixExpression:                  "_prefix_expression"
+    of luaHidFieldSep:                          "_field_sep"
+    of luaHidFunctionName:                      "_function_name"
+    of luaHidBlockCommentStart:                 "_block_comment_start"
+    of luaHidFunctionNameMethodIndexExpression: "_function_name_method_index_expression"
+    of luaHidAttrib:                            "_attrib"
+    of luaHidVariableAssignmentVarlist:         "_variable_assignment_varlist"
+    of luaHidAttNameList:                       "_att_name_list"
+    of luaHidFunctionNamePrefixExpression:      "_function_name_prefix_expression"
+    of luaHidQuoteString:                       "_quote_string"
+    of luaHidBlock:                             "_block"
+    of luaHidBlockString:                       "_block_string"
+    of luaHidFunctionNameDotIndexExpression:    "_function_name_dot_index_expression"
+    of luaHidFieldList:                         "_field_list"
+    of luaHidBlockStringEnd:                    "_block_string_end"
+    of luaHidBlockCommentContent:               "_block_comment_content"
+    of luaHidSinglequoteStringContent:          "_singlequote_string_content"
+    of luaHidLocalVariableAssignment:           "_local_variable_assignment"
+    of luaHidFunctionBody:                      "_function_body"
+    of luaHidVariableAssignmentExplist:         "_variable_assignment_explist"
+    of luaHidBlockStringContent:                "_block_string_content"
+    of luaSyntaxError:                          "ERROR"
 
 type
   LuaExternalTok* = enum
-    luaExternComment ## comment
-    luaExternString  ## string
+    luaExtern_block_comment_start   ## _block_comment_start
+    luaExtern_block_comment_content ## _block_comment_content
+    luaExtern_block_comment_end     ## _block_comment_end
+    luaExtern_block_string_start    ## _block_string_start
+    luaExtern_block_string_content  ## _block_string_content
+    luaExtern_block_string_end      ## _block_string_end
 
 type
   TsLuaNode* = distinct TSNode
@@ -247,491 +295,35 @@ type
 
 const luaAllowedSubnodes*: array[LuaNodeKind, set[LuaNodeKind]] = block:
                                                                     var tmp: array[LuaNodeKind, set[LuaNodeKind]]
-                                                                    tmp[luaArguments] = {
-                                                                                          luaBinaryOperation,
-                                                                                          luaFalse,
-                                                                                          luaFieldExpression,
-                                                                                          luaFunctionCall,
-                                                                                          luaFunctionDefinition,
-                                                                                          luaGlobalVariable,
-                                                                                          luaIdentifier,
-                                                                                          luaNext,
-                                                                                          luaNil,
-                                                                                          luaNumber,
-                                                                                          luaSelf,
-                                                                                          luaSpread,
-                                                                                          luaString,
-                                                                                          luaTable,
-                                                                                          luaTrue,
-                                                                                          luaUnaryOperation
-                                                                                        }
-                                                                    tmp[luaBinaryOperation] = {
-                                                                                                luaBinaryOperation,
-                                                                                                luaFalse,
-                                                                                                luaFieldExpression,
-                                                                                                luaFunctionCall,
-                                                                                                luaFunctionDefinition,
-                                                                                                luaGlobalVariable,
-                                                                                                luaIdentifier,
-                                                                                                luaNext,
-                                                                                                luaNil,
-                                                                                                luaNumber,
-                                                                                                luaSelf,
-                                                                                                luaSpread,
-                                                                                                luaString,
-                                                                                                luaTable,
-                                                                                                luaTrue,
-                                                                                                luaUnaryOperation
-                                                                                              }
-                                                                    tmp[luaConditionExpression] = {
-                                                                                                    luaBinaryOperation,
-                                                                                                    luaFalse,
-                                                                                                    luaFieldExpression,
-                                                                                                    luaFunctionCall,
-                                                                                                    luaFunctionDefinition,
-                                                                                                    luaGlobalVariable,
-                                                                                                    luaIdentifier,
-                                                                                                    luaNext,
-                                                                                                    luaNil,
-                                                                                                    luaNumber,
-                                                                                                    luaSelf,
-                                                                                                    luaSpread,
-                                                                                                    luaString,
-                                                                                                    luaTable,
-                                                                                                    luaTrue,
-                                                                                                    luaUnaryOperation
-                                                                                                  }
-                                                                    tmp[luaDoStatement] = {
-                                                                                            luaBreakStatement,
-                                                                                            luaDoStatement,
-                                                                                            luaExpression,
-                                                                                            luaForInStatement,
-                                                                                            luaForStatement,
-                                                                                            luaFunction,
-                                                                                            luaFunctionCall,
-                                                                                            luaGotoStatement,
-                                                                                            luaIfStatement,
-                                                                                            luaLabelStatement,
-                                                                                            luaLocalFunction,
-                                                                                            luaLocalVariableDeclaration,
-                                                                                            luaRepeatStatement,
-                                                                                            luaReturnStatement,
-                                                                                            luaVariableDeclaration,
-                                                                                            luaWhileStatement
-                                                                                          }
-                                                                    tmp[luaElse] = {
-                                                                                     luaBreakStatement,
-                                                                                     luaDoStatement,
-                                                                                     luaExpression,
-                                                                                     luaForInStatement,
-                                                                                     luaForStatement,
-                                                                                     luaFunction,
-                                                                                     luaFunctionCall,
-                                                                                     luaGotoStatement,
-                                                                                     luaIfStatement,
-                                                                                     luaLabelStatement,
-                                                                                     luaLocalFunction,
-                                                                                     luaLocalVariableDeclaration,
-                                                                                     luaRepeatStatement,
-                                                                                     luaReturnStatement,
-                                                                                     luaVariableDeclaration,
-                                                                                     luaWhileStatement
-                                                                                   }
-                                                                    tmp[luaElseif] = {
-                                                                                       luaBreakStatement,
-                                                                                       luaConditionExpression,
-                                                                                       luaDoStatement,
-                                                                                       luaExpression,
-                                                                                       luaForInStatement,
-                                                                                       luaForStatement,
-                                                                                       luaFunction,
-                                                                                       luaFunctionCall,
-                                                                                       luaGotoStatement,
-                                                                                       luaIfStatement,
-                                                                                       luaLabelStatement,
-                                                                                       luaLocalFunction,
-                                                                                       luaLocalVariableDeclaration,
-                                                                                       luaRepeatStatement,
-                                                                                       luaReturnStatement,
-                                                                                       luaVariableDeclaration,
-                                                                                       luaWhileStatement
-                                                                                     }
-                                                                    tmp[luaExpression] = {
-                                                                                           luaBinaryOperation,
-                                                                                           luaFalse,
-                                                                                           luaFieldExpression,
-                                                                                           luaFunctionCall,
-                                                                                           luaFunctionDefinition,
-                                                                                           luaGlobalVariable,
-                                                                                           luaIdentifier,
-                                                                                           luaNext,
-                                                                                           luaNil,
-                                                                                           luaNumber,
-                                                                                           luaSelf,
-                                                                                           luaSpread,
-                                                                                           luaString,
-                                                                                           luaTable,
-                                                                                           luaTrue,
-                                                                                           luaUnaryOperation
-                                                                                         }
-                                                                    tmp[luaField] = {
-                                                                                      luaBinaryOperation,
-                                                                                      luaFalse,
-                                                                                      luaFieldExpression,
-                                                                                      luaFunctionCall,
-                                                                                      luaFunctionDefinition,
-                                                                                      luaGlobalVariable,
-                                                                                      luaIdentifier,
-                                                                                      luaNext,
-                                                                                      luaNil,
-                                                                                      luaNumber,
-                                                                                      luaSelf,
-                                                                                      luaSpread,
-                                                                                      luaString,
-                                                                                      luaTable,
-                                                                                      luaTrue,
-                                                                                      luaUnaryOperation
-                                                                                    }
-                                                                    tmp[luaFieldExpression] = {
-                                                                                                luaBinaryOperation,
-                                                                                                luaFalse,
-                                                                                                luaFieldExpression,
-                                                                                                luaFunctionCall,
-                                                                                                luaFunctionDefinition,
-                                                                                                luaGlobalVariable,
-                                                                                                luaIdentifier,
-                                                                                                luaNext,
-                                                                                                luaNil,
-                                                                                                luaNumber,
-                                                                                                luaPropertyIdentifier,
-                                                                                                luaSelf,
-                                                                                                luaSpread,
-                                                                                                luaString,
-                                                                                                luaTable,
-                                                                                                luaTrue,
-                                                                                                luaUnaryOperation
-                                                                                              }
-                                                                    tmp[luaForInStatement] = {
-                                                                                               luaBreakStatement,
-                                                                                               luaDoStatement,
-                                                                                               luaExpression,
-                                                                                               luaForInStatement,
-                                                                                               luaForStatement,
-                                                                                               luaFunction,
-                                                                                               luaFunctionCall,
-                                                                                               luaGotoStatement,
-                                                                                               luaIfStatement,
-                                                                                               luaLabelStatement,
-                                                                                               luaLocalFunction,
-                                                                                               luaLocalVariableDeclaration,
-                                                                                               luaLoopExpression,
-                                                                                               luaRepeatStatement,
-                                                                                               luaReturnStatement,
-                                                                                               luaVariableDeclaration,
-                                                                                               luaWhileStatement
-                                                                                             }
-                                                                    tmp[luaForStatement] = {
-                                                                                             luaBreakStatement,
-                                                                                             luaDoStatement,
-                                                                                             luaExpression,
-                                                                                             luaForInStatement,
-                                                                                             luaForStatement,
-                                                                                             luaFunction,
-                                                                                             luaFunctionCall,
-                                                                                             luaGotoStatement,
-                                                                                             luaIfStatement,
-                                                                                             luaLabelStatement,
-                                                                                             luaLocalFunction,
-                                                                                             luaLocalVariableDeclaration,
-                                                                                             luaLoopExpression,
-                                                                                             luaRepeatStatement,
-                                                                                             luaReturnStatement,
-                                                                                             luaVariableDeclaration,
-                                                                                             luaWhileStatement
-                                                                                           }
-                                                                    tmp[luaFunction] = {
-                                                                                         luaBreakStatement,
-                                                                                         luaDoStatement,
-                                                                                         luaExpression,
-                                                                                         luaForInStatement,
-                                                                                         luaForStatement,
-                                                                                         luaFunction,
-                                                                                         luaFunctionCall,
-                                                                                         luaFunctionName,
-                                                                                         luaGotoStatement,
-                                                                                         luaIfStatement,
-                                                                                         luaLabelStatement,
-                                                                                         luaLocalFunction,
-                                                                                         luaLocalVariableDeclaration,
-                                                                                         luaParameters,
-                                                                                         luaRepeatStatement,
-                                                                                         luaReturnStatement,
-                                                                                         luaVariableDeclaration,
-                                                                                         luaWhileStatement
-                                                                                       }
-                                                                    tmp[luaFunctionCall] = {
-                                                                                             luaArguments,
-                                                                                             luaBinaryOperation,
-                                                                                             luaFalse,
-                                                                                             luaFieldExpression,
-                                                                                             luaFunctionCall,
-                                                                                             luaFunctionDefinition,
-                                                                                             luaGlobalVariable,
-                                                                                             luaIdentifier,
-                                                                                             luaMethod,
-                                                                                             luaNext,
-                                                                                             luaNil,
-                                                                                             luaNumber,
-                                                                                             luaSelf,
-                                                                                             luaSpread,
-                                                                                             luaString,
-                                                                                             luaTable,
-                                                                                             luaTrue,
-                                                                                             luaUnaryOperation
-                                                                                           }
-                                                                    tmp[luaFunctionDefinition] = {
-                                                                                                   luaBreakStatement,
-                                                                                                   luaDoStatement,
-                                                                                                   luaExpression,
-                                                                                                   luaForInStatement,
-                                                                                                   luaForStatement,
-                                                                                                   luaFunction,
-                                                                                                   luaFunctionCall,
-                                                                                                   luaGotoStatement,
-                                                                                                   luaIfStatement,
-                                                                                                   luaLabelStatement,
-                                                                                                   luaLocalFunction,
-                                                                                                   luaLocalVariableDeclaration,
-                                                                                                   luaParameters,
-                                                                                                   luaRepeatStatement,
-                                                                                                   luaReturnStatement,
-                                                                                                   luaVariableDeclaration,
-                                                                                                   luaWhileStatement
-                                                                                                 }
-                                                                    tmp[luaFunctionName] = {luaFunctionNameField, luaIdentifier, luaMethod}
-                                                                    tmp[luaFunctionNameField] = {luaPropertyIdentifier}
+                                                                    tmp[luaArguments] = {luaExpression}
+                                                                    tmp[luaAssignmentStatement] = {luaExpressionList, luaVariableList}
+                                                                    tmp[luaAttribute] = {luaIdentifier}
+                                                                    tmp[luaBlock] = {luaReturnStatement, luaStatement}
+                                                                    tmp[luaChunk] = {luaHashBangLine, luaReturnStatement, luaStatement}
+                                                                    tmp[luaExpressionList] = {luaExpression}
+                                                                    tmp[luaForGenericClause] = {luaExpressionList, luaVariableList}
                                                                     tmp[luaGotoStatement] = {luaIdentifier}
-                                                                    tmp[luaIfStatement] = {
-                                                                                            luaBreakStatement,
-                                                                                            luaConditionExpression,
-                                                                                            luaDoStatement,
-                                                                                            luaElse,
-                                                                                            luaElseif,
-                                                                                            luaExpression,
-                                                                                            luaForInStatement,
-                                                                                            luaForStatement,
-                                                                                            luaFunction,
-                                                                                            luaFunctionCall,
-                                                                                            luaGotoStatement,
-                                                                                            luaIfStatement,
-                                                                                            luaLabelStatement,
-                                                                                            luaLocalFunction,
-                                                                                            luaLocalVariableDeclaration,
-                                                                                            luaRepeatStatement,
-                                                                                            luaReturnStatement,
-                                                                                            luaVariableDeclaration,
-                                                                                            luaWhileStatement
-                                                                                          }
                                                                     tmp[luaLabelStatement] = {luaIdentifier}
-                                                                    tmp[luaLocalFunction] = {
-                                                                                              luaBreakStatement,
-                                                                                              luaDoStatement,
-                                                                                              luaExpression,
-                                                                                              luaForInStatement,
-                                                                                              luaForStatement,
-                                                                                              luaFunction,
-                                                                                              luaFunctionCall,
-                                                                                              luaGotoStatement,
-                                                                                              luaIdentifier,
-                                                                                              luaIfStatement,
-                                                                                              luaLabelStatement,
-                                                                                              luaLocalFunction,
-                                                                                              luaLocalVariableDeclaration,
-                                                                                              luaParameters,
-                                                                                              luaRepeatStatement,
-                                                                                              luaReturnStatement,
-                                                                                              luaVariableDeclaration,
-                                                                                              luaWhileStatement
-                                                                                            }
-                                                                    tmp[luaLocalVariableDeclaration] = {
-                                                                                                         luaBinaryOperation,
-                                                                                                         luaFalse,
-                                                                                                         luaFieldExpression,
-                                                                                                         luaFunctionCall,
-                                                                                                         luaFunctionDefinition,
-                                                                                                         luaGlobalVariable,
-                                                                                                         luaIdentifier,
-                                                                                                         luaNext,
-                                                                                                         luaNil,
-                                                                                                         luaNumber,
-                                                                                                         luaSelf,
-                                                                                                         luaSpread,
-                                                                                                         luaString,
-                                                                                                         luaTable,
-                                                                                                         luaTrue,
-                                                                                                         luaUnaryOperation,
-                                                                                                         luaVariableDeclarator
-                                                                                                       }
-                                                                    tmp[luaLoopExpression] = {
-                                                                                               luaBinaryOperation,
-                                                                                               luaFalse,
-                                                                                               luaFieldExpression,
-                                                                                               luaFunctionCall,
-                                                                                               luaFunctionDefinition,
-                                                                                               luaGlobalVariable,
-                                                                                               luaIdentifier,
-                                                                                               luaNext,
-                                                                                               luaNil,
-                                                                                               luaNumber,
-                                                                                               luaSelf,
-                                                                                               luaSpread,
-                                                                                               luaString,
-                                                                                               luaTable,
-                                                                                               luaTrue,
-                                                                                               luaUnaryOperation
-                                                                                             }
-                                                                    tmp[luaParameters] = {luaIdentifier, luaSelf, luaSpread}
-                                                                    tmp[luaProgram] = {
-                                                                                        luaBreakStatement,
-                                                                                        luaDoStatement,
-                                                                                        luaExpression,
-                                                                                        luaForInStatement,
-                                                                                        luaForStatement,
-                                                                                        luaFunction,
-                                                                                        luaFunctionCall,
-                                                                                        luaGotoStatement,
-                                                                                        luaIfStatement,
-                                                                                        luaLabelStatement,
-                                                                                        luaLocalFunction,
-                                                                                        luaLocalVariableDeclaration,
-                                                                                        luaRepeatStatement,
-                                                                                        luaReturnStatement,
-                                                                                        luaVariableDeclaration,
-                                                                                        luaWhileStatement
-                                                                                      }
-                                                                    tmp[luaRepeatStatement] = {
-                                                                                                luaBreakStatement,
-                                                                                                luaConditionExpression,
-                                                                                                luaDoStatement,
-                                                                                                luaExpression,
-                                                                                                luaForInStatement,
-                                                                                                luaForStatement,
-                                                                                                luaFunction,
-                                                                                                luaFunctionCall,
-                                                                                                luaGotoStatement,
-                                                                                                luaIfStatement,
-                                                                                                luaLabelStatement,
-                                                                                                luaLocalFunction,
-                                                                                                luaLocalVariableDeclaration,
-                                                                                                luaRepeatStatement,
-                                                                                                luaReturnStatement,
-                                                                                                luaVariableDeclaration,
-                                                                                                luaWhileStatement
-                                                                                              }
-                                                                    tmp[luaReturnStatement] = {
-                                                                                                luaBinaryOperation,
-                                                                                                luaFalse,
-                                                                                                luaFieldExpression,
-                                                                                                luaFunctionCall,
-                                                                                                luaFunctionDefinition,
-                                                                                                luaGlobalVariable,
-                                                                                                luaIdentifier,
-                                                                                                luaNext,
-                                                                                                luaNil,
-                                                                                                luaNumber,
-                                                                                                luaSelf,
-                                                                                                luaSpread,
-                                                                                                luaString,
-                                                                                                luaTable,
-                                                                                                luaTrue,
-                                                                                                luaUnaryOperation
-                                                                                              }
-                                                                    tmp[luaTable] = {luaField}
-                                                                    tmp[luaUnaryOperation] = {
-                                                                                               luaBinaryOperation,
-                                                                                               luaFalse,
-                                                                                               luaFieldExpression,
-                                                                                               luaFunctionCall,
-                                                                                               luaFunctionDefinition,
-                                                                                               luaGlobalVariable,
-                                                                                               luaIdentifier,
-                                                                                               luaNext,
-                                                                                               luaNil,
-                                                                                               luaNumber,
-                                                                                               luaSelf,
-                                                                                               luaSpread,
-                                                                                               luaString,
-                                                                                               luaTable,
-                                                                                               luaTrue,
-                                                                                               luaUnaryOperation
-                                                                                             }
-                                                                    tmp[luaVariableDeclaration] = {
-                                                                                                    luaBinaryOperation,
-                                                                                                    luaFalse,
-                                                                                                    luaFieldExpression,
-                                                                                                    luaFunctionCall,
-                                                                                                    luaFunctionDefinition,
-                                                                                                    luaGlobalVariable,
-                                                                                                    luaIdentifier,
-                                                                                                    luaNext,
-                                                                                                    luaNil,
-                                                                                                    luaNumber,
-                                                                                                    luaSelf,
-                                                                                                    luaSpread,
-                                                                                                    luaString,
-                                                                                                    luaTable,
-                                                                                                    luaTrue,
-                                                                                                    luaUnaryOperation,
-                                                                                                    luaVariableDeclarator
-                                                                                                  }
-                                                                    tmp[luaVariableDeclarator] = {
-                                                                                                   luaBinaryOperation,
-                                                                                                   luaFalse,
-                                                                                                   luaFieldExpression,
-                                                                                                   luaFunctionCall,
-                                                                                                   luaFunctionDefinition,
-                                                                                                   luaGlobalVariable,
-                                                                                                   luaIdentifier,
-                                                                                                   luaNext,
-                                                                                                   luaNil,
-                                                                                                   luaNumber,
-                                                                                                   luaSelf,
-                                                                                                   luaSpread,
-                                                                                                   luaString,
-                                                                                                   luaTable,
-                                                                                                   luaTrue,
-                                                                                                   luaUnaryOperation
-                                                                                                 }
-                                                                    tmp[luaWhileStatement] = {
-                                                                                               luaBreakStatement,
-                                                                                               luaConditionExpression,
-                                                                                               luaDoStatement,
-                                                                                               luaExpression,
-                                                                                               luaForInStatement,
-                                                                                               luaForStatement,
-                                                                                               luaFunction,
-                                                                                               luaFunctionCall,
-                                                                                               luaGotoStatement,
-                                                                                               luaIfStatement,
-                                                                                               luaLabelStatement,
-                                                                                               luaLocalFunction,
-                                                                                               luaLocalVariableDeclaration,
-                                                                                               luaRepeatStatement,
-                                                                                               luaReturnStatement,
-                                                                                               luaVariableDeclaration,
-                                                                                               luaWhileStatement
-                                                                                             }
+                                                                    tmp[luaParameters] = {luaVarargExpression}
+                                                                    tmp[luaParenthesizedExpression] = {luaExpression}
+                                                                    tmp[luaReturnStatement] = {luaExpressionList}
+                                                                    tmp[luaStringContent] = {luaEscapeSequence}
+                                                                    tmp[luaTableConstructor] = {luaField}
+                                                                    tmp[luaVariableDeclaration] = {luaAssignmentStatement, luaVariableList}
                                                                     tmp
 const luaTokenKinds*: set[LuaNodeKind] = {
+                                           luaQuoteTok,
                                            luaHashTok,
                                            luaPercentTok,
                                            luaAmpersandTok,
+                                           luaApostropheTok,
                                            luaLParTok,
                                            luaRParTok,
                                            luaAsteriskTok,
                                            luaPlusTok,
                                            luaCommaTok,
                                            luaMinusTok,
+                                           luaDoubleMinusTok,
                                            luaDotTok,
                                            luaDoubleDotTok,
                                            luaSlashTok,
@@ -748,10 +340,10 @@ const luaTokenKinds*: set[LuaNodeKind] = {
                                            luaGreaterThanEqualTok,
                                            luaDoubleGreaterThanTok,
                                            luaLBrackTok,
+                                           luaDoubleLBrackTok,
                                            luaRBrackTok,
+                                           luaDoubleRBrackTok,
                                            luaAccentTok,
-                                           luaHidGTok,
-                                           luaHidVERSIONTok,
                                            luaAndTok,
                                            luaDoTok,
                                            luaElseTok,
@@ -777,20 +369,34 @@ const luaTokenKinds*: set[LuaNodeKind] = {
                                            luaTildeEqualTok
                                          }
 const luaHiddenKinds*: set[LuaNodeKind] = {
+                                            luaHidBlockCommentEnd,
+                                            luaHidDoublequoteStringContent,
+                                            luaHidExpressionList,
+                                            luaHidLocalFunctionDeclaration,
+                                            luaHidParameterList,
+                                            luaHidBlockStringStart,
+                                            luaHidNameList,
+                                            luaHidPrefixExpression,
                                             luaHidFieldSep,
-                                            luaHidExpression,
-                                            luaLocalFunctionStatement,
-                                            luaHidVariableDeclarator,
-                                            luaFunctionCallStatement,
-                                            luaHidPrefix,
-                                            luaFunctionStatement,
-                                            luaHidLoopExpression,
-                                            luaHidStatement,
-                                            luaHidFieldSequence,
+                                            luaHidFunctionName,
+                                            luaHidBlockCommentStart,
+                                            luaHidFunctionNameMethodIndexExpression,
+                                            luaHidAttrib,
+                                            luaHidVariableAssignmentVarlist,
+                                            luaHidAttNameList,
+                                            luaHidFunctionNamePrefixExpression,
+                                            luaHidQuoteString,
+                                            luaHidBlock,
+                                            luaHidBlockString,
+                                            luaHidFunctionNameDotIndexExpression,
+                                            luaHidFieldList,
+                                            luaHidBlockStringEnd,
+                                            luaHidBlockCommentContent,
+                                            luaHidSinglequoteStringContent,
+                                            luaHidLocalVariableAssignment,
                                             luaHidFunctionBody,
-                                            luaHidInLoopExpression,
-                                            luaHidLocalVariableDeclarator,
-                                            luaHidEmptyStatement
+                                            luaHidVariableAssignmentExplist,
+                                            luaHidBlockStringContent
                                           }
 proc tsNodeType*(node: TsLuaNode): string
 
@@ -798,101 +404,112 @@ proc tsNodeType*(node: TsLuaNode): string
 proc kind*(node: TsLuaNode): LuaNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "arguments":                  luaArguments
-      of "binary_operation":           luaBinaryOperation
-      of "condition_expression":       luaConditionExpression
-      of "do_statement":               luaDoStatement
-      of "else":                       luaElse
-      of "elseif":                     luaElseif
-      of "expression":                 luaExpression
-      of "field":                      luaField
-      of "field_expression":           luaFieldExpression
-      of "for_in_statement":           luaForInStatement
-      of "for_statement":              luaForStatement
-      of "function":                   luaFunction
-      of "function_call":              luaFunctionCall
-      of "function_definition":        luaFunctionDefinition
-      of "function_name":              luaFunctionName
-      of "function_name_field":        luaFunctionNameField
-      of "global_variable":            luaGlobalVariable
-      of "goto_statement":             luaGotoStatement
-      of "if_statement":               luaIfStatement
-      of "label_statement":            luaLabelStatement
-      of "local_function":             luaLocalFunction
-      of "local_variable_declaration": luaLocalVariableDeclaration
-      of "loop_expression":            luaLoopExpression
-      of "parameters":                 luaParameters
-      of "program":                    luaProgram
-      of "repeat_statement":           luaRepeatStatement
-      of "return_statement":           luaReturnStatement
-      of "table":                      luaTable
-      of "unary_operation":            luaUnaryOperation
-      of "variable_declaration":       luaVariableDeclaration
-      of "variable_declarator":        luaVariableDeclarator
-      of "while_statement":            luaWhileStatement
-      of "#":                          luaHashTok
-      of "%":                          luaPercentTok
-      of "&":                          luaAmpersandTok
-      of "(":                          luaLParTok
-      of ")":                          luaRParTok
-      of "*":                          luaAsteriskTok
-      of "+":                          luaPlusTok
-      of ",":                          luaCommaTok
-      of "-":                          luaMinusTok
-      of ".":                          luaDotTok
-      of "..":                         luaDoubleDotTok
-      of "/":                          luaSlashTok
-      of "//":                         luaDoubleSlashTok
-      of ":":                          luaColonTok
-      of "::":                         luaDoubleColonTok
-      of ";":                          luaSemicolonTok
-      of "<":                          luaLessThanTok
-      of "<<":                         luaDoubleLessThanTok
-      of "<=":                         luaLessThanEqualTok
-      of "=":                          luaEqualTok
-      of "==":                         luaDoubleEqualTok
-      of ">":                          luaGreaterThanTok
-      of ">=":                         luaGreaterThanEqualTok
-      of ">>":                         luaDoubleGreaterThanTok
-      of "[":                          luaLBrackTok
-      of "]":                          luaRBrackTok
-      of "^":                          luaAccentTok
-      of "_G":                         luaHidGTok
-      of "_VERSION":                   luaHidVERSIONTok
-      of "and":                        luaAndTok
-      of "break_statement":            luaBreakStatement
-      of "comment":                    luaComment
-      of "do":                         luaDoTok
-      of "end":                        luaEndTok
-      of "false":                      luaFalse
-      of "for":                        luaForTok
-      of "goto":                       luaGotoTok
-      of "identifier":                 luaIdentifier
-      of "if":                         luaIfTok
-      of "in":                         luaInTok
-      of "local":                      luaLocalTok
-      of "method":                     luaMethod
-      of "next":                       luaNext
-      of "nil":                        luaNil
-      of "not":                        luaNotTok
-      of "number":                     luaNumber
-      of "or":                         luaOrTok
-      of "property_identifier":        luaPropertyIdentifier
-      of "repeat":                     luaRepeatTok
-      of "return":                     luaReturnTok
-      of "self":                       luaSelf
-      of "spread":                     luaSpread
-      of "string":                     luaString
-      of "then":                       luaThenTok
-      of "true":                       luaTrue
-      of "until":                      luaUntilTok
-      of "while":                      luaWhileTok
-      of "{":                          luaLCurlyTok
-      of "|":                          luaPipeTok
-      of "}":                          luaRCurlyTok
-      of "~":                          luaTildeTok
-      of "~=":                         luaTildeEqualTok
-      of "ERROR":                      luaSyntaxError
+      of "declaration":              luaDeclaration
+      of "expression":               luaExpression
+      of "statement":                luaStatement
+      of "variable":                 luaVariable
+      of "arguments":                luaArguments
+      of "assignment_statement":     luaAssignmentStatement
+      of "attribute":                luaAttribute
+      of "binary_expression":        luaBinaryExpression
+      of "block":                    luaBlock
+      of "bracket_index_expression": luaBracketIndexExpression
+      of "chunk":                    luaChunk
+      of "comment":                  luaComment
+      of "do_statement":             luaDoStatement
+      of "dot_index_expression":     luaDotIndexExpression
+      of "else_statement":           luaElseStatement
+      of "elseif_statement":         luaElseifStatement
+      of "empty_statement":          luaEmptyStatement
+      of "expression_list":          luaExpressionList
+      of "field":                    luaField
+      of "for_generic_clause":       luaForGenericClause
+      of "for_numeric_clause":       luaForNumericClause
+      of "for_statement":            luaForStatement
+      of "function_call":            luaFunctionCall
+      of "function_declaration":     luaFunctionDeclaration
+      of "function_definition":      luaFunctionDefinition
+      of "goto_statement":           luaGotoStatement
+      of "if_statement":             luaIfStatement
+      of "label_statement":          luaLabelStatement
+      of "method_index_expression":  luaMethodIndexExpression
+      of "parameters":               luaParameters
+      of "parenthesized_expression": luaParenthesizedExpression
+      of "repeat_statement":         luaRepeatStatement
+      of "return_statement":         luaReturnStatement
+      of "string":                   luaString
+      of "string_content":           luaStringContent
+      of "table_constructor":        luaTableConstructor
+      of "unary_expression":         luaUnaryExpression
+      of "variable_declaration":     luaVariableDeclaration
+      of "variable_list":            luaVariableList
+      of "while_statement":          luaWhileStatement
+      of "\"":                       luaQuoteTok
+      of "#":                        luaHashTok
+      of "%":                        luaPercentTok
+      of "&":                        luaAmpersandTok
+      of "\'":                       luaApostropheTok
+      of "(":                        luaLParTok
+      of ")":                        luaRParTok
+      of "*":                        luaAsteriskTok
+      of "+":                        luaPlusTok
+      of ",":                        luaCommaTok
+      of "-":                        luaMinusTok
+      of "--":                       luaDoubleMinusTok
+      of ".":                        luaDotTok
+      of "..":                       luaDoubleDotTok
+      of "/":                        luaSlashTok
+      of "//":                       luaDoubleSlashTok
+      of ":":                        luaColonTok
+      of "::":                       luaDoubleColonTok
+      of ";":                        luaSemicolonTok
+      of "<":                        luaLessThanTok
+      of "<<":                       luaDoubleLessThanTok
+      of "<=":                       luaLessThanEqualTok
+      of "=":                        luaEqualTok
+      of "==":                       luaDoubleEqualTok
+      of ">":                        luaGreaterThanTok
+      of ">=":                       luaGreaterThanEqualTok
+      of ">>":                       luaDoubleGreaterThanTok
+      of "[":                        luaLBrackTok
+      of "[[":                       luaDoubleLBrackTok
+      of "]":                        luaRBrackTok
+      of "]]":                       luaDoubleRBrackTok
+      of "^":                        luaAccentTok
+      of "and":                      luaAndTok
+      of "break_statement":          luaBreakStatement
+      of "comment_content":          luaCommentContent
+      of "do":                       luaDoTok
+      of "else":                     luaElseTok
+      of "elseif":                   luaElseifTok
+      of "end":                      luaEndTok
+      of "escape_sequence":          luaEscapeSequence
+      of "false":                    luaFalse
+      of "for":                      luaForTok
+      of "function":                 luaFunctionTok
+      of "goto":                     luaGotoTok
+      of "hash_bang_line":           luaHashBangLine
+      of "identifier":               luaIdentifier
+      of "if":                       luaIfTok
+      of "in":                       luaInTok
+      of "local":                    luaLocalTok
+      of "nil":                      luaNil
+      of "not":                      luaNotTok
+      of "number":                   luaNumber
+      of "or":                       luaOrTok
+      of "repeat":                   luaRepeatTok
+      of "return":                   luaReturnTok
+      of "then":                     luaThenTok
+      of "true":                     luaTrue
+      of "until":                    luaUntilTok
+      of "vararg_expression":        luaVarargExpression
+      of "while":                    luaWhileTok
+      of "{":                        luaLCurlyTok
+      of "|":                        luaPipeTok
+      of "}":                        luaRCurlyTok
+      of "~":                        luaTildeTok
+      of "~=":                       luaTildeEqualTok
+      of "ERROR":                    luaSyntaxError
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
@@ -977,53 +594,71 @@ let luaGrammar*: array[LuaNodeKind, HtsRule[LuaNodeKind]] = block:
                                                                 K = LuaNodeKind
 
 
+                                                              rules[luaHidDoublequoteStringContent] = tsRepeat1[K](tsChoice[K](tsRegex[K]("[^\"\\\\]+"), tsSymbol[K](luaEscapeSequence)))
+                                                              rules[luaHidExpressionList] = tsSeq[K](tsSymbol[K](luaExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaExpression))))
                                                               rules[luaLabelStatement] = tsSeq[K](tsString[K]("::"), tsSymbol[K](luaIdentifier), tsString[K]("::"))
-                                                              rules[luaWhileStatement] = tsSeq[K](tsString[K]("while"), tsSymbol[K](luaHidExpression), tsString[K]("do"), tsRepeat[K](tsSymbol[K](luaHidStatement)), tsChoice[K](tsSymbol[K](luaReturnStatement), tsBlank[K]()), tsString[K]("end"))
+                                                              rules[luaHidLocalFunctionDeclaration] = tsSeq[K](tsString[K]("local"), tsString[K]("function"), tsSymbol[K](luaIdentifier), tsSymbol[K](luaHidFunctionBody))
+                                                              rules[luaFunctionDeclaration] = tsSeq[K](tsString[K]("function"), tsSymbol[K](luaHidFunctionName), tsSymbol[K](luaHidFunctionBody))
+                                                              rules[luaWhileStatement] = tsSeq[K](tsString[K]("while"), tsSymbol[K](luaExpression), tsString[K]("do"), tsChoice[K](tsSymbol[K](luaHidBlock), tsBlank[K]()), tsString[K]("end"))
+                                                              rules[luaHidNameList] = tsSeq[K](tsSymbol[K](luaIdentifier), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaIdentifier))))
+                                                              rules[luaHidParameterList] = tsChoice[K](tsSeq[K](tsSeq[K](tsSymbol[K](luaIdentifier), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaIdentifier)))), tsChoice[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaVarargExpression)), tsBlank[K]())), tsSymbol[K](luaVarargExpression))
+                                                              rules[luaHidPrefixExpression] = tsChoice[K](tsSymbol[K](luaVariable), tsSymbol[K](luaFunctionCall), tsSymbol[K](luaParenthesizedExpression))
+                                                              rules[luaBracketIndexExpression] = tsSeq[K](tsSymbol[K](luaHidPrefixExpression), tsString[K]("["), tsSymbol[K](luaExpression), tsString[K]("]"))
                                                               rules[luaHidFieldSep] = tsChoice[K](tsString[K](","), tsString[K](";"))
-                                                              rules[luaUnaryOperation] = tsSeq[K](tsChoice[K](tsString[K]("not"), tsString[K]("#"), tsString[K]("-"), tsString[K]("~")), tsSymbol[K](luaHidExpression))
-                                                              rules[luaForInStatement] = tsSeq[K](tsString[K]("for"), tsSymbol[K](luaHidInLoopExpression), tsString[K]("do"), tsRepeat[K](tsSymbol[K](luaHidStatement)), tsChoice[K](tsSymbol[K](luaReturnStatement), tsBlank[K]()), tsString[K]("end"))
-                                                              rules[luaReturnStatement] = tsSeq[K](tsString[K]("return"), tsChoice[K](tsSeq[K](tsSymbol[K](luaHidExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaHidExpression)))), tsBlank[K]()), tsChoice[K](tsSymbol[K](luaHidEmptyStatement), tsBlank[K]()))
-                                                              rules[luaFalse] = tsString[K]("false")
+                                                              rules[luaDotIndexExpression] = tsSeq[K](tsSymbol[K](luaHidPrefixExpression), tsString[K]("."), tsSymbol[K](luaIdentifier))
+                                                              rules[luaReturnStatement] = tsSeq[K](tsString[K]("return"), tsChoice[K](tsSymbol[K](luaHidExpressionList), tsBlank[K]()), tsChoice[K](tsString[K](";"), tsBlank[K]()))
+                                                              rules[luaElseifStatement] = tsSeq[K](tsString[K]("elseif"), tsSymbol[K](luaExpression), tsString[K]("then"), tsChoice[K](tsSymbol[K](luaHidBlock), tsBlank[K]()))
                                                               rules[luaGotoStatement] = tsSeq[K](tsString[K]("goto"), tsSymbol[K](luaIdentifier))
-                                                              rules[luaHidExpression] = tsChoice[K](tsSymbol[K](luaSpread), tsSymbol[K](luaHidPrefix), tsSymbol[K](luaNext), tsSymbol[K](luaFunctionDefinition), tsSymbol[K](luaTable), tsSymbol[K](luaBinaryOperation), tsSymbol[K](luaUnaryOperation), tsSymbol[K](luaString), tsSymbol[K](luaNumber), tsSymbol[K](luaNil), tsSymbol[K](luaTrue), tsSymbol[K](luaFalse), tsSymbol[K](luaIdentifier))
-                                                              rules[luaForStatement] = tsSeq[K](tsString[K]("for"), tsSymbol[K](luaHidLoopExpression), tsString[K]("do"), tsRepeat[K](tsSymbol[K](luaHidStatement)), tsChoice[K](tsSymbol[K](luaReturnStatement), tsBlank[K]()), tsString[K]("end"))
-                                                              rules[luaLocalFunctionStatement] = tsSeq[K](tsString[K]("local"), tsString[K]("function"), tsSymbol[K](luaIdentifier), tsSymbol[K](luaHidFunctionBody))
+                                                              rules[luaFalse] = tsString[K]("false")
+                                                              rules[luaElseStatement] = tsSeq[K](tsString[K]("else"), tsChoice[K](tsSymbol[K](luaHidBlock), tsBlank[K]()))
+                                                              rules[luaForStatement] = tsSeq[K](tsString[K]("for"), tsChoice[K](tsSymbol[K](luaForGenericClause), tsSymbol[K](luaForNumericClause)), tsString[K]("do"), tsChoice[K](tsSymbol[K](luaHidBlock), tsBlank[K]()), tsString[K]("end"))
+                                                              rules[luaHidFunctionName] = tsChoice[K](tsSymbol[K](luaHidFunctionNamePrefixExpression), tsSymbol[K](luaHidFunctionNameMethodIndexExpression))
+                                                              rules[luaBinaryExpression] = tsChoice[K](tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("or"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("and"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("<"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("<="), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("=="), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("~="), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K](">="), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K](">"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("|"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("~"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("&"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("<<"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K](">>"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("+"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("-"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("*"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("/"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("//"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("%"), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K](".."), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaExpression), tsString[K]("^"), tsSymbol[K](luaExpression)))
+                                                              rules[luaString] = tsChoice[K](tsSymbol[K](luaHidQuoteString), tsSymbol[K](luaHidBlockString))
+                                                              rules[luaDeclaration] = tsChoice[K](tsSymbol[K](luaFunctionDeclaration), tsSymbol[K](luaHidLocalFunctionDeclaration), tsSymbol[K](luaVariableDeclaration))
+                                                              rules[luaHidFunctionNameMethodIndexExpression] = tsSeq[K](tsSymbol[K](luaHidFunctionNamePrefixExpression), tsString[K](":"), tsSymbol[K](luaIdentifier))
+                                                              rules[luaHidAttrib] = tsSeq[K](tsString[K]("<"), tsSymbol[K](luaIdentifier), tsString[K](">"))
+                                                              rules[luaHidVariableAssignmentVarlist] = tsSeq[K](tsSymbol[K](luaVariable), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaVariable))))
                                                               rules[luaBreakStatement] = tsString[K]("break")
-                                                              rules[luaHidVariableDeclarator] = tsChoice[K](tsSymbol[K](luaIdentifier), tsSeq[K](tsSymbol[K](luaHidPrefix), tsString[K]("["), tsSymbol[K](luaHidExpression), tsString[K]("]")), tsSymbol[K](luaFieldExpression))
-                                                              rules[luaSelf] = tsString[K]("self")
-                                                              rules[luaFunctionCallStatement] = tsChoice[K](tsSeq[K](tsSymbol[K](luaHidPrefix), tsSymbol[K](luaArguments)), tsSeq[K](tsSymbol[K](luaHidPrefix), tsString[K](":"), tsSymbol[K](luaIdentifier), tsSymbol[K](luaArguments)))
-                                                              rules[luaRepeatStatement] = tsSeq[K](tsString[K]("repeat"), tsRepeat[K](tsSymbol[K](luaHidStatement)), tsChoice[K](tsSymbol[K](luaReturnStatement), tsBlank[K]()), tsString[K]("until"), tsSymbol[K](luaHidExpression))
-                                                              rules[luaElseif] = tsSeq[K](tsString[K]("elseif"), tsSymbol[K](luaHidExpression), tsString[K]("then"), tsRepeat[K](tsSymbol[K](luaHidStatement)), tsChoice[K](tsSymbol[K](luaReturnStatement), tsBlank[K]()))
-                                                              rules[luaIfStatement] = tsSeq[K](tsString[K]("if"), tsSymbol[K](luaHidExpression), tsString[K]("then"), tsRepeat[K](tsSymbol[K](luaHidStatement)), tsChoice[K](tsSymbol[K](luaReturnStatement), tsBlank[K]()), tsRepeat[K](tsSymbol[K](luaElseif)), tsChoice[K](tsSymbol[K](luaElse), tsBlank[K]()), tsString[K]("end"))
+                                                              rules[luaHidAttNameList] = tsSeq[K](tsSeq[K](tsSymbol[K](luaIdentifier), tsChoice[K](tsSymbol[K](luaHidAttrib), tsBlank[K]())), tsRepeat[K](tsSeq[K](tsString[K](","), tsSeq[K](tsSymbol[K](luaIdentifier), tsChoice[K](tsSymbol[K](luaHidAttrib), tsBlank[K]())))))
+                                                              rules[luaMethodIndexExpression] = tsSeq[K](tsSymbol[K](luaHidPrefixExpression), tsString[K](":"), tsSymbol[K](luaIdentifier))
+                                                              rules[luaTableConstructor] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSymbol[K](luaHidFieldList), tsBlank[K]()), tsString[K]("}"))
+                                                              rules[luaEscapeSequence] = tsSeq[K](tsString[K]("\\"), tsChoice[K](tsRegex[K]("[\\nabfnrtv\\\\\'\"]"), tsRegex[K]("z\\s*"), tsRegex[K]("[0-9]{1,3}"), tsRegex[K]("x[0-9a-fA-F]{2}"), tsRegex[K]("u\\{[0-9a-fA-F]+\\}")))
+                                                              rules[luaRepeatStatement] = tsSeq[K](tsString[K]("repeat"), tsChoice[K](tsSymbol[K](luaHidBlock), tsBlank[K]()), tsString[K]("until"), tsSymbol[K](luaExpression))
+                                                              rules[luaHidFunctionNamePrefixExpression] = tsChoice[K](tsSymbol[K](luaIdentifier), tsSymbol[K](luaHidFunctionNameDotIndexExpression))
+                                                              rules[luaIfStatement] = tsSeq[K](tsString[K]("if"), tsSymbol[K](luaExpression), tsString[K]("then"), tsChoice[K](tsSymbol[K](luaHidBlock), tsBlank[K]()), tsRepeat[K](tsSymbol[K](luaElseifStatement)), tsChoice[K](tsSymbol[K](luaElseStatement), tsBlank[K]()), tsString[K]("end"))
                                                               rules[luaFunctionDefinition] = tsSeq[K](tsString[K]("function"), tsSymbol[K](luaHidFunctionBody))
-                                                              rules[luaHidPrefix] = tsChoice[K](tsSymbol[K](luaSelf), tsSymbol[K](luaGlobalVariable), tsSymbol[K](luaHidVariableDeclarator), tsSymbol[K](luaFunctionCallStatement), tsSeq[K](tsString[K]("("), tsSymbol[K](luaHidExpression), tsString[K](")")))
-                                                              rules[luaBinaryOperation] = tsChoice[K](tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("or"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("and"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("<"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("<="), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("=="), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("~="), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K](">="), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K](">"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("|"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("~"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("&"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("<<"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K](">>"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("+"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("-"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("*"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("/"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("//"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("%"), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K](".."), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaHidExpression), tsString[K]("^"), tsSymbol[K](luaHidExpression)))
-                                                              rules[luaFieldExpression] = tsSeq[K](tsSymbol[K](luaHidPrefix), tsString[K]("."), tsSymbol[K](luaIdentifier))
-                                                              rules[luaLocalVariableDeclaration] = tsSeq[K](tsString[K]("local"), tsSymbol[K](luaHidLocalVariableDeclarator), tsChoice[K](tsSeq[K](tsString[K]("="), tsSeq[K](tsSymbol[K](luaHidExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaHidExpression))))), tsBlank[K]()))
-                                                              rules[luaField] = tsChoice[K](tsSeq[K](tsString[K]("["), tsSymbol[K](luaHidExpression), tsString[K]("]"), tsString[K]("="), tsSymbol[K](luaHidExpression)), tsSeq[K](tsSymbol[K](luaIdentifier), tsString[K]("="), tsSymbol[K](luaHidExpression)), tsSymbol[K](luaHidExpression))
-                                                              rules[luaFunctionStatement] = tsSeq[K](tsString[K]("function"), tsSymbol[K](luaFunctionName), tsSymbol[K](luaHidFunctionBody))
+                                                              rules[luaHidQuoteString] = tsChoice[K](tsSeq[K](tsString[K]("\""), tsChoice[K](tsSymbol[K](luaHidDoublequoteStringContent), tsBlank[K]()), tsString[K]("\"")), tsSeq[K](tsString[K]("\'"), tsChoice[K](tsSymbol[K](luaHidSinglequoteStringContent), tsBlank[K]()), tsString[K]("\'")))
+                                                              rules[luaUnaryExpression] = tsSeq[K](tsChoice[K](tsString[K]("not"), tsString[K]("#"), tsString[K]("-"), tsString[K]("~")), tsSymbol[K](luaExpression))
+                                                              rules[luaHidBlock] = tsChoice[K](tsSeq[K](tsRepeat1[K](tsSymbol[K](luaStatement)), tsChoice[K](tsSymbol[K](luaReturnStatement), tsBlank[K]())), tsSeq[K](tsRepeat[K](tsSymbol[K](luaStatement)), tsSymbol[K](luaReturnStatement)))
+                                                              rules[luaHidFunctionNameDotIndexExpression] = tsSeq[K](tsSymbol[K](luaHidFunctionNamePrefixExpression), tsString[K]("."), tsSymbol[K](luaIdentifier))
+                                                              rules[luaExpression] = tsChoice[K](tsSymbol[K](luaNil), tsSymbol[K](luaFalse), tsSymbol[K](luaTrue), tsSymbol[K](luaNumber), tsSymbol[K](luaString), tsSymbol[K](luaVarargExpression), tsSymbol[K](luaFunctionDefinition), tsSymbol[K](luaVariable), tsSymbol[K](luaFunctionCall), tsSymbol[K](luaParenthesizedExpression), tsSymbol[K](luaTableConstructor), tsSymbol[K](luaBinaryExpression), tsSymbol[K](luaUnaryExpression))
                                                               rules[luaNil] = tsString[K]("nil")
-                                                              rules[luaGlobalVariable] = tsChoice[K](tsString[K]("_G"), tsString[K]("_VERSION"))
-                                                              rules[luaHidLoopExpression] = tsSeq[K](tsSymbol[K](luaIdentifier), tsString[K]("="), tsSymbol[K](luaHidExpression), tsString[K](","), tsSymbol[K](luaHidExpression), tsChoice[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaHidExpression)), tsBlank[K]()))
-                                                              rules[luaHidStatement] = tsChoice[K](tsSymbol[K](luaHidExpression), tsSymbol[K](luaVariableDeclaration), tsSymbol[K](luaLocalVariableDeclaration), tsSymbol[K](luaDoStatement), tsSymbol[K](luaIfStatement), tsSymbol[K](luaWhileStatement), tsSymbol[K](luaRepeatStatement), tsSymbol[K](luaForStatement), tsSymbol[K](luaForInStatement), tsSymbol[K](luaGotoStatement), tsSymbol[K](luaBreakStatement), tsSymbol[K](luaLabelStatement), tsSymbol[K](luaHidEmptyStatement), tsSymbol[K](luaFunctionStatement), tsSymbol[K](luaLocalFunctionStatement), tsSymbol[K](luaFunctionCallStatement))
-                                                              rules[luaParameters] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](luaSelf), tsSymbol[K](luaSpread), tsSymbol[K](luaIdentifier)), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaIdentifier))), tsChoice[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaSpread)), tsBlank[K]())), tsBlank[K]()), tsString[K](")"))
-                                                              rules[luaNumber] = tsChoice[K](tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("0"), tsSeq[K](tsChoice[K](tsString[K]("0"), tsBlank[K]()), tsRegex[K]("[1-9]"), tsChoice[K](tsRegex[K]("[0-9]+"), tsBlank[K]()))), tsString[K]("."), tsChoice[K](tsRegex[K]("[0-9]+"), tsBlank[K]()), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsRegex[K]("[0-9]+"))), tsBlank[K]())), tsSeq[K](tsString[K]("."), tsRegex[K]("[0-9]+"), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsRegex[K]("[0-9]+"))), tsBlank[K]())), tsSeq[K](tsChoice[K](tsString[K]("0"), tsSeq[K](tsChoice[K](tsString[K]("0"), tsBlank[K]()), tsRegex[K]("[1-9]"), tsChoice[K](tsRegex[K]("[0-9]+"), tsBlank[K]()))), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsRegex[K]("[0-9]+"))), tsBlank[K]()))), tsSeq[K](tsChoice[K](tsString[K]("0x"), tsString[K]("0X")), tsRegex[K]("[a-fA-F0-9]+"), tsChoice[K](tsSeq[K](tsString[K]("."), tsRegex[K]("[a-fA-F0-9]+")), tsBlank[K]()), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("p"), tsString[K]("P")), tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsRegex[K]("[0-9]+"))), tsBlank[K]())))
-                                                              rules[luaIdentifier] = tsRegex[K]("[a-zA-Z_][a-zA-Z0-9_]*")
-                                                              rules[luaArguments] = tsChoice[K](tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsSymbol[K](luaHidExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaHidExpression)))), tsBlank[K]()), tsString[K](")")), tsSymbol[K](luaTable), tsSymbol[K](luaString))
-                                                              rules[luaSpread] = tsString[K]("...")
-                                                              rules[luaHidFieldSequence] = tsSeq[K](tsSymbol[K](luaField), tsRepeat[K](tsSeq[K](tsSymbol[K](luaHidFieldSep), tsSymbol[K](luaField))), tsChoice[K](tsSymbol[K](luaHidFieldSep), tsBlank[K]()))
-                                                              rules[luaTable] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSymbol[K](luaHidFieldSequence), tsBlank[K]()), tsString[K]("}"))
-                                                              rules[luaHidFunctionBody] = tsSeq[K](tsSymbol[K](luaParameters), tsRepeat[K](tsSymbol[K](luaHidStatement)), tsChoice[K](tsSymbol[K](luaReturnStatement), tsBlank[K]()), tsString[K]("end"))
-                                                              rules[luaNext] = tsString[K]("next")
-                                                              rules[luaDoStatement] = tsSeq[K](tsString[K]("do"), tsRepeat[K](tsSymbol[K](luaHidStatement)), tsChoice[K](tsSymbol[K](luaReturnStatement), tsBlank[K]()), tsString[K]("end"))
-                                                              rules[luaProgram] = tsSeq[K](tsRepeat[K](tsSymbol[K](luaHidStatement)), tsChoice[K](tsSymbol[K](luaReturnStatement), tsBlank[K]()))
-                                                              rules[luaHidInLoopExpression] = tsSeq[K](tsSeq[K](tsSymbol[K](luaIdentifier), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaIdentifier)))), tsString[K]("in"), tsSeq[K](tsSymbol[K](luaHidExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaHidExpression)))))
+                                                              rules[luaHidBlockString] = tsSeq[K](tsSymbol[K](luaHidBlockStringStart), tsSymbol[K](luaHidBlockStringContent), tsSymbol[K](luaHidBlockStringEnd))
+                                                              rules[luaHidFieldList] = tsSeq[K](tsSymbol[K](luaField), tsRepeat[K](tsSeq[K](tsSymbol[K](luaHidFieldSep), tsSymbol[K](luaField))), tsChoice[K](tsSymbol[K](luaHidFieldSep), tsBlank[K]()))
+                                                              rules[luaField] = tsChoice[K](tsSeq[K](tsString[K]("["), tsSymbol[K](luaExpression), tsString[K]("]"), tsString[K]("="), tsSymbol[K](luaExpression)), tsSeq[K](tsSymbol[K](luaIdentifier), tsString[K]("="), tsSymbol[K](luaExpression)), tsSymbol[K](luaExpression))
+                                                              rules[luaComment] = tsChoice[K](tsSeq[K](tsString[K]("--"), tsRegex[K]("[^\\r\\n]*")), tsSeq[K](tsSymbol[K](luaHidBlockCommentStart), tsSymbol[K](luaHidBlockCommentContent), tsSymbol[K](luaHidBlockCommentEnd)))
+                                                              rules[luaAssignmentStatement] = tsSeq[K](tsSymbol[K](luaHidVariableAssignmentVarlist), tsString[K]("="), tsSymbol[K](luaHidVariableAssignmentExplist))
+                                                              rules[luaNumber] = tsChoice[K](tsChoice[K](tsSeq[K](tsRegex[K]("[0-9]+"), tsRegex[K]("U?LL")), tsSeq[K](tsChoice[K](tsSeq[K](tsChoice[K](tsRegex[K]("[0-9]+"), tsBlank[K]()), tsChoice[K](tsString[K]("."), tsBlank[K]()), tsRegex[K]("[0-9]+")), tsSeq[K](tsRegex[K]("[0-9]+"), tsChoice[K](tsString[K]("."), tsBlank[K]()), tsChoice[K](tsRegex[K]("[0-9]+"), tsBlank[K]()))), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsRegex[K]("[0-9]+"))), tsBlank[K]()), tsChoice[K](tsChoice[K](tsString[K]("i"), tsString[K]("I")), tsBlank[K]()))), tsSeq[K](tsChoice[K](tsString[K]("0x"), tsString[K]("0X")), tsChoice[K](tsSeq[K](tsRegex[K]("[a-fA-F0-9]+"), tsRegex[K]("U?LL")), tsSeq[K](tsChoice[K](tsSeq[K](tsChoice[K](tsRegex[K]("[a-fA-F0-9]+"), tsBlank[K]()), tsChoice[K](tsString[K]("."), tsBlank[K]()), tsRegex[K]("[a-fA-F0-9]+")), tsSeq[K](tsRegex[K]("[a-fA-F0-9]+"), tsChoice[K](tsString[K]("."), tsBlank[K]()), tsChoice[K](tsRegex[K]("[a-fA-F0-9]+"), tsBlank[K]()))), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("p"), tsString[K]("P")), tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsRegex[K]("[0-9]+"))), tsBlank[K]()), tsChoice[K](tsChoice[K](tsString[K]("i"), tsString[K]("I")), tsBlank[K]())))))
+                                                              rules[luaParameters] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSymbol[K](luaHidParameterList), tsBlank[K]()), tsString[K](")"))
+                                                              rules[luaIdentifier] = tsSeq[K](tsRegex[K]("[^\\p{Control}\\s+\\-*/%^#&~|<>=(){}\\[\\];:,.\\\\\'\"\\d]"), tsRegex[K]("[^\\p{Control}\\s+\\-*/%^#&~|<>=(){}\\[\\];:,.\\\\\'\"]*"))
+                                                              rules[luaArguments] = tsChoice[K](tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsSymbol[K](luaExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaExpression)))), tsBlank[K]()), tsString[K](")")), tsSymbol[K](luaTableConstructor), tsSymbol[K](luaString))
+                                                              rules[luaHidSinglequoteStringContent] = tsRepeat1[K](tsChoice[K](tsRegex[K]("[^\'\\\\]+"), tsSymbol[K](luaEscapeSequence)))
+                                                              rules[luaFunctionCall] = tsSeq[K](tsChoice[K](tsSymbol[K](luaHidPrefixExpression), tsSymbol[K](luaMethodIndexExpression)), tsSymbol[K](luaArguments))
+                                                              rules[luaHashBangLine] = tsRegex[K]("#.*")
+                                                              rules[luaVarargExpression] = tsString[K]("...")
+                                                              rules[luaHidLocalVariableAssignment] = tsSeq[K](tsSymbol[K](luaHidAttNameList), tsString[K]("="), tsSymbol[K](luaHidVariableAssignmentExplist))
+                                                              rules[luaEmptyStatement] = tsString[K](";")
+                                                              rules[luaHidFunctionBody] = tsSeq[K](tsSymbol[K](luaParameters), tsChoice[K](tsSymbol[K](luaHidBlock), tsBlank[K]()), tsString[K]("end"))
+                                                              rules[luaHidVariableAssignmentExplist] = tsSeq[K](tsSymbol[K](luaExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaExpression))))
+                                                              rules[luaStatement] = tsChoice[K](tsSymbol[K](luaEmptyStatement), tsSymbol[K](luaAssignmentStatement), tsSymbol[K](luaFunctionCall), tsSymbol[K](luaLabelStatement), tsSymbol[K](luaBreakStatement), tsSymbol[K](luaGotoStatement), tsSymbol[K](luaDoStatement), tsSymbol[K](luaWhileStatement), tsSymbol[K](luaRepeatStatement), tsSymbol[K](luaIfStatement), tsSymbol[K](luaForStatement), tsSymbol[K](luaDeclaration))
+                                                              rules[luaDoStatement] = tsSeq[K](tsString[K]("do"), tsChoice[K](tsSymbol[K](luaHidBlock), tsBlank[K]()), tsString[K]("end"))
+                                                              rules[luaForGenericClause] = tsSeq[K](tsSymbol[K](luaHidNameList), tsString[K]("in"), tsSymbol[K](luaHidExpressionList))
+                                                              rules[luaForNumericClause] = tsSeq[K](tsSymbol[K](luaIdentifier), tsString[K]("="), tsSymbol[K](luaExpression), tsString[K](","), tsSymbol[K](luaExpression), tsChoice[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaExpression)), tsBlank[K]()))
                                                               rules[luaTrue] = tsString[K]("true")
-                                                              rules[luaHidLocalVariableDeclarator] = tsSeq[K](tsSymbol[K](luaIdentifier), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaIdentifier))))
-                                                              rules[luaElse] = tsSeq[K](tsString[K]("else"), tsRepeat[K](tsSymbol[K](luaHidStatement)), tsChoice[K](tsSymbol[K](luaReturnStatement), tsBlank[K]()))
-                                                              rules[luaFunctionNameField] = tsSeq[K](tsSymbol[K](luaIdentifier), tsRepeat[K](tsSeq[K](tsString[K]("."), tsSymbol[K](luaIdentifier))))
-                                                              rules[luaVariableDeclaration] = tsSeq[K](tsSeq[K](tsSymbol[K](luaHidVariableDeclarator), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaHidVariableDeclarator)))), tsString[K]("="), tsSeq[K](tsSymbol[K](luaHidExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](luaHidExpression)))))
-                                                              rules[luaFunctionName] = tsSeq[K](tsChoice[K](tsSymbol[K](luaIdentifier), tsSymbol[K](luaFunctionNameField)), tsChoice[K](tsSeq[K](tsString[K](":"), tsSymbol[K](luaIdentifier)), tsBlank[K]()))
-                                                              rules[luaHidEmptyStatement] = tsString[K](";")
+                                                              rules[luaChunk] = tsSeq[K](tsChoice[K](tsSymbol[K](luaHashBangLine), tsBlank[K]()), tsRepeat[K](tsSymbol[K](luaStatement)), tsChoice[K](tsSymbol[K](luaReturnStatement), tsBlank[K]()))
+                                                              rules[luaVariable] = tsChoice[K](tsSymbol[K](luaIdentifier), tsSymbol[K](luaBracketIndexExpression), tsSymbol[K](luaDotIndexExpression))
+                                                              rules[luaVariableDeclaration] = tsSeq[K](tsString[K]("local"), tsChoice[K](tsSymbol[K](luaHidAttNameList), tsSymbol[K](luaHidLocalVariableAssignment)))
+                                                              rules[luaParenthesizedExpression] = tsSeq[K](tsString[K]("("), tsSymbol[K](luaExpression), tsString[K](")"))
                                                               rules
 

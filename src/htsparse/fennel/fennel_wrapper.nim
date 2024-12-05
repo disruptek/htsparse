@@ -6,17 +6,20 @@ import
 export treesitter
 type
   FennelNodeKind* = enum
+    fennelAccumulate                 ## accumulate
     fennelAssignment                 ## assignment
     fennelBinding                    ## binding
     fennelBoolean                    ## boolean
+    fennelCollect                    ## collect
     fennelEach                       ## each
-    fennelEachClause                 ## each_clause
     fennelFn                         ## fn
     fennelFor                        ## for
     fennelForClause                  ## for_clause
     fennelGlobal                     ## global
     fennelGuardPattern               ## guard_pattern
     fennelHashfn                     ## hashfn
+    fennelIcollect                   ## icollect
+    fennelIterBindings               ## iter_bindings
     fennelLambda                     ## lambda
     fennelLet                        ## let
     fennelLetClause                  ## let_clause
@@ -43,6 +46,7 @@ type
     fennelTable                      ## table
     fennelTableAssignment            ## table_assignment
     fennelTableBinding               ## table_binding
+    fennelTablePair                  ## table_pair
     fennelTablePattern               ## table_pattern
     fennelUnquote                    ## unquote
     fennelVar                        ## var
@@ -62,6 +66,8 @@ type
     fennelLBrackTok                  ## [
     fennelRBrackTok                  ## ]
     fennelBacktickTok                ## `
+    fennelAccumulateTok              ## accumulate
+    fennelCollectTok                 ## collect
     fennelComment                    ## comment
     fennelEachTok                    ## each
     fennelEscapeSequence             ## escape_sequence
@@ -70,11 +76,13 @@ type
     fennelForTok                     ## for
     fennelGlobalTok                  ## global
     fennelHashfnTok                  ## hashfn
+    fennelIcollectTok                ## icollect
     fennelLambdaTok                  ## lambda
     fennelLetTok                     ## let
     fennelLocalTok                   ## local
     fennelMatchTok                   ## match
     fennelNil                        ## nil
+    fennelNilSafe                    ## nil_safe
     fennelNumber                     ## number
     fennelOrTok                      ## or
     fennelSetTok                     ## set
@@ -103,17 +111,20 @@ type
 
 proc strRepr*(kind: FennelNodeKind): string =
   case kind:
+    of fennelAccumulate:                 "accumulate"
     of fennelAssignment:                 "assignment"
     of fennelBinding:                    "binding"
     of fennelBoolean:                    "boolean"
+    of fennelCollect:                    "collect"
     of fennelEach:                       "each"
-    of fennelEachClause:                 "each_clause"
     of fennelFn:                         "fn"
     of fennelFor:                        "for"
     of fennelForClause:                  "for_clause"
     of fennelGlobal:                     "global"
     of fennelGuardPattern:               "guard_pattern"
     of fennelHashfn:                     "hashfn"
+    of fennelIcollect:                   "icollect"
+    of fennelIterBindings:               "iter_bindings"
     of fennelLambda:                     "lambda"
     of fennelLet:                        "let"
     of fennelLetClause:                  "let_clause"
@@ -140,6 +151,7 @@ proc strRepr*(kind: FennelNodeKind): string =
     of fennelTable:                      "table"
     of fennelTableAssignment:            "table_assignment"
     of fennelTableBinding:               "table_binding"
+    of fennelTablePair:                  "table_pair"
     of fennelTablePattern:               "table_pattern"
     of fennelUnquote:                    "unquote"
     of fennelVar:                        "var"
@@ -159,6 +171,8 @@ proc strRepr*(kind: FennelNodeKind): string =
     of fennelLBrackTok:                  "["
     of fennelRBrackTok:                  "]"
     of fennelBacktickTok:                "`"
+    of fennelAccumulateTok:              "accumulate"
+    of fennelCollectTok:                 "collect"
     of fennelComment:                    "comment"
     of fennelEachTok:                    "each"
     of fennelEscapeSequence:             "escape_sequence"
@@ -167,11 +181,13 @@ proc strRepr*(kind: FennelNodeKind): string =
     of fennelForTok:                     "for"
     of fennelGlobalTok:                  "global"
     of fennelHashfnTok:                  "hashfn"
+    of fennelIcollectTok:                "icollect"
     of fennelLambdaTok:                  "lambda"
     of fennelLetTok:                     "let"
     of fennelLocalTok:                   "local"
     of fennelMatchTok:                   "match"
     of fennelNil:                        "nil"
+    of fennelNilSafe:                    "nil_safe"
     of fennelNumber:                     "number"
     of fennelOrTok:                      "or"
     of fennelSetTok:                     "set"
@@ -206,16 +222,81 @@ type
 
 const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block:
                                                                              var tmp: array[FennelNodeKind, set[FennelNodeKind]]
+                                                                             tmp[fennelAccumulate] = {
+                                                                                                       fennelAccumulate,
+                                                                                                       fennelBinding,
+                                                                                                       fennelBoolean,
+                                                                                                       fennelCollect,
+                                                                                                       fennelEach,
+                                                                                                       fennelFn,
+                                                                                                       fennelFor,
+                                                                                                       fennelGlobal,
+                                                                                                       fennelHashfn,
+                                                                                                       fennelIcollect,
+                                                                                                       fennelIterBindings,
+                                                                                                       fennelLambda,
+                                                                                                       fennelLet,
+                                                                                                       fennelList,
+                                                                                                       fennelLocal,
+                                                                                                       fennelMatch,
+                                                                                                       fennelMultiSymbol,
+                                                                                                       fennelMultiValueBinding,
+                                                                                                       fennelNil,
+                                                                                                       fennelNilSafe,
+                                                                                                       fennelNumber,
+                                                                                                       fennelQuote,
+                                                                                                       fennelSequentialTable,
+                                                                                                       fennelSequentialTableBinding,
+                                                                                                       fennelSet,
+                                                                                                       fennelString,
+                                                                                                       fennelSymbol,
+                                                                                                       fennelTable,
+                                                                                                       fennelTableBinding,
+                                                                                                       fennelVar,
+                                                                                                       fennelVararg
+                                                                                                     }
                                                                              tmp[fennelAssignment] = {fennelMultiSymbol, fennelSymbol}
                                                                              tmp[fennelBinding] = {fennelSymbol}
+                                                                             tmp[fennelCollect] = {
+                                                                                                    fennelAccumulate,
+                                                                                                    fennelBoolean,
+                                                                                                    fennelCollect,
+                                                                                                    fennelEach,
+                                                                                                    fennelFn,
+                                                                                                    fennelFor,
+                                                                                                    fennelGlobal,
+                                                                                                    fennelHashfn,
+                                                                                                    fennelIcollect,
+                                                                                                    fennelIterBindings,
+                                                                                                    fennelLambda,
+                                                                                                    fennelLet,
+                                                                                                    fennelList,
+                                                                                                    fennelLocal,
+                                                                                                    fennelMatch,
+                                                                                                    fennelMultiSymbol,
+                                                                                                    fennelNil,
+                                                                                                    fennelNilSafe,
+                                                                                                    fennelNumber,
+                                                                                                    fennelQuote,
+                                                                                                    fennelSequentialTable,
+                                                                                                    fennelSet,
+                                                                                                    fennelString,
+                                                                                                    fennelSymbol,
+                                                                                                    fennelTable,
+                                                                                                    fennelVar,
+                                                                                                    fennelVararg
+                                                                                                  }
                                                                              tmp[fennelEach] = {
+                                                                                                 fennelAccumulate,
                                                                                                  fennelBoolean,
+                                                                                                 fennelCollect,
                                                                                                  fennelEach,
-                                                                                                 fennelEachClause,
                                                                                                  fennelFn,
                                                                                                  fennelFor,
                                                                                                  fennelGlobal,
                                                                                                  fennelHashfn,
+                                                                                                 fennelIcollect,
+                                                                                                 fennelIterBindings,
                                                                                                  fennelLambda,
                                                                                                  fennelLet,
                                                                                                  fennelList,
@@ -223,6 +304,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                  fennelMatch,
                                                                                                  fennelMultiSymbol,
                                                                                                  fennelNil,
+                                                                                                 fennelNilSafe,
                                                                                                  fennelNumber,
                                                                                                  fennelQuote,
                                                                                                  fennelSequentialTable,
@@ -233,14 +315,16 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                  fennelVar,
                                                                                                  fennelVararg
                                                                                                }
-                                                                             tmp[fennelEachClause] = {fennelBinding, fennelMultiValueBinding, fennelSequentialTableBinding, fennelTableBinding}
                                                                              tmp[fennelFn] = {
+                                                                                               fennelAccumulate,
                                                                                                fennelBoolean,
+                                                                                               fennelCollect,
                                                                                                fennelEach,
                                                                                                fennelFn,
                                                                                                fennelFor,
                                                                                                fennelGlobal,
                                                                                                fennelHashfn,
+                                                                                               fennelIcollect,
                                                                                                fennelLambda,
                                                                                                fennelLet,
                                                                                                fennelList,
@@ -248,6 +332,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                fennelMatch,
                                                                                                fennelMultiSymbol,
                                                                                                fennelNil,
+                                                                                               fennelNilSafe,
                                                                                                fennelNumber,
                                                                                                fennelParameters,
                                                                                                fennelQuote,
@@ -260,13 +345,16 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                fennelVararg
                                                                                              }
                                                                              tmp[fennelFor] = {
+                                                                                                fennelAccumulate,
                                                                                                 fennelBoolean,
+                                                                                                fennelCollect,
                                                                                                 fennelEach,
                                                                                                 fennelFn,
                                                                                                 fennelFor,
                                                                                                 fennelForClause,
                                                                                                 fennelGlobal,
                                                                                                 fennelHashfn,
+                                                                                                fennelIcollect,
                                                                                                 fennelLambda,
                                                                                                 fennelLet,
                                                                                                 fennelList,
@@ -274,6 +362,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                 fennelMatch,
                                                                                                 fennelMultiSymbol,
                                                                                                 fennelNil,
+                                                                                                fennelNilSafe,
                                                                                                 fennelNumber,
                                                                                                 fennelQuote,
                                                                                                 fennelSequentialTable,
@@ -285,12 +374,15 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                 fennelVararg
                                                                                               }
                                                                              tmp[fennelForClause] = {
+                                                                                                      fennelAccumulate,
                                                                                                       fennelBoolean,
+                                                                                                      fennelCollect,
                                                                                                       fennelEach,
                                                                                                       fennelFn,
                                                                                                       fennelFor,
                                                                                                       fennelGlobal,
                                                                                                       fennelHashfn,
+                                                                                                      fennelIcollect,
                                                                                                       fennelLambda,
                                                                                                       fennelLet,
                                                                                                       fennelList,
@@ -298,6 +390,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                       fennelMatch,
                                                                                                       fennelMultiSymbol,
                                                                                                       fennelNil,
+                                                                                                      fennelNilSafe,
                                                                                                       fennelNumber,
                                                                                                       fennelQuote,
                                                                                                       fennelSequentialTable,
@@ -309,13 +402,16 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                       fennelVararg
                                                                                                     }
                                                                              tmp[fennelGlobal] = {
+                                                                                                   fennelAccumulate,
                                                                                                    fennelBinding,
                                                                                                    fennelBoolean,
+                                                                                                   fennelCollect,
                                                                                                    fennelEach,
                                                                                                    fennelFn,
                                                                                                    fennelFor,
                                                                                                    fennelGlobal,
                                                                                                    fennelHashfn,
+                                                                                                   fennelIcollect,
                                                                                                    fennelLambda,
                                                                                                    fennelLet,
                                                                                                    fennelList,
@@ -324,6 +420,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                    fennelMultiSymbol,
                                                                                                    fennelMultiValueBinding,
                                                                                                    fennelNil,
+                                                                                                   fennelNilSafe,
                                                                                                    fennelNumber,
                                                                                                    fennelQuote,
                                                                                                    fennelSequentialTable,
@@ -341,6 +438,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                          fennelMultiSymbol,
                                                                                                          fennelMultiValuePattern,
                                                                                                          fennelNil,
+                                                                                                         fennelNilSafe,
                                                                                                          fennelNumber,
                                                                                                          fennelSequentialTablePattern,
                                                                                                          fennelString,
@@ -349,12 +447,15 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                          fennelVararg
                                                                                                        }
                                                                              tmp[fennelHashfn] = {
+                                                                                                   fennelAccumulate,
                                                                                                    fennelBoolean,
+                                                                                                   fennelCollect,
                                                                                                    fennelEach,
                                                                                                    fennelFn,
                                                                                                    fennelFor,
                                                                                                    fennelGlobal,
                                                                                                    fennelHashfn,
+                                                                                                   fennelIcollect,
                                                                                                    fennelLambda,
                                                                                                    fennelLet,
                                                                                                    fennelList,
@@ -362,6 +463,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                    fennelMatch,
                                                                                                    fennelMultiSymbol,
                                                                                                    fennelNil,
+                                                                                                   fennelNilSafe,
                                                                                                    fennelNumber,
                                                                                                    fennelQuote,
                                                                                                    fennelSequentialTable,
@@ -372,13 +474,46 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                    fennelVar,
                                                                                                    fennelVararg
                                                                                                  }
+                                                                             tmp[fennelIcollect] = {
+                                                                                                     fennelAccumulate,
+                                                                                                     fennelBoolean,
+                                                                                                     fennelCollect,
+                                                                                                     fennelEach,
+                                                                                                     fennelFn,
+                                                                                                     fennelFor,
+                                                                                                     fennelGlobal,
+                                                                                                     fennelHashfn,
+                                                                                                     fennelIcollect,
+                                                                                                     fennelIterBindings,
+                                                                                                     fennelLambda,
+                                                                                                     fennelLet,
+                                                                                                     fennelList,
+                                                                                                     fennelLocal,
+                                                                                                     fennelMatch,
+                                                                                                     fennelMultiSymbol,
+                                                                                                     fennelNil,
+                                                                                                     fennelNilSafe,
+                                                                                                     fennelNumber,
+                                                                                                     fennelQuote,
+                                                                                                     fennelSequentialTable,
+                                                                                                     fennelSet,
+                                                                                                     fennelString,
+                                                                                                     fennelSymbol,
+                                                                                                     fennelTable,
+                                                                                                     fennelVar,
+                                                                                                     fennelVararg
+                                                                                                   }
+                                                                             tmp[fennelIterBindings] = {fennelBinding, fennelMultiValueBinding, fennelSequentialTableBinding, fennelTableBinding}
                                                                              tmp[fennelLambda] = {
+                                                                                                   fennelAccumulate,
                                                                                                    fennelBoolean,
+                                                                                                   fennelCollect,
                                                                                                    fennelEach,
                                                                                                    fennelFn,
                                                                                                    fennelFor,
                                                                                                    fennelGlobal,
                                                                                                    fennelHashfn,
+                                                                                                   fennelIcollect,
                                                                                                    fennelLambda,
                                                                                                    fennelLet,
                                                                                                    fennelList,
@@ -386,6 +521,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                    fennelMatch,
                                                                                                    fennelMultiSymbol,
                                                                                                    fennelNil,
+                                                                                                   fennelNilSafe,
                                                                                                    fennelNumber,
                                                                                                    fennelParameters,
                                                                                                    fennelQuote,
@@ -398,12 +534,15 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                    fennelVararg
                                                                                                  }
                                                                              tmp[fennelLet] = {
+                                                                                                fennelAccumulate,
                                                                                                 fennelBoolean,
+                                                                                                fennelCollect,
                                                                                                 fennelEach,
                                                                                                 fennelFn,
                                                                                                 fennelFor,
                                                                                                 fennelGlobal,
                                                                                                 fennelHashfn,
+                                                                                                fennelIcollect,
                                                                                                 fennelLambda,
                                                                                                 fennelLet,
                                                                                                 fennelLetClause,
@@ -412,6 +551,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                 fennelMatch,
                                                                                                 fennelMultiSymbol,
                                                                                                 fennelNil,
+                                                                                                fennelNilSafe,
                                                                                                 fennelNumber,
                                                                                                 fennelQuote,
                                                                                                 fennelSequentialTable,
@@ -423,13 +563,16 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                 fennelVararg
                                                                                               }
                                                                              tmp[fennelLetClause] = {
+                                                                                                      fennelAccumulate,
                                                                                                       fennelBinding,
                                                                                                       fennelBoolean,
+                                                                                                      fennelCollect,
                                                                                                       fennelEach,
                                                                                                       fennelFn,
                                                                                                       fennelFor,
                                                                                                       fennelGlobal,
                                                                                                       fennelHashfn,
+                                                                                                      fennelIcollect,
                                                                                                       fennelLambda,
                                                                                                       fennelLet,
                                                                                                       fennelList,
@@ -438,6 +581,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                       fennelMultiSymbol,
                                                                                                       fennelMultiValueBinding,
                                                                                                       fennelNil,
+                                                                                                      fennelNilSafe,
                                                                                                       fennelNumber,
                                                                                                       fennelQuote,
                                                                                                       fennelSequentialTable,
@@ -451,12 +595,15 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                       fennelVararg
                                                                                                     }
                                                                              tmp[fennelList] = {
+                                                                                                 fennelAccumulate,
                                                                                                  fennelBoolean,
+                                                                                                 fennelCollect,
                                                                                                  fennelEach,
                                                                                                  fennelFn,
                                                                                                  fennelFor,
                                                                                                  fennelGlobal,
                                                                                                  fennelHashfn,
+                                                                                                 fennelIcollect,
                                                                                                  fennelLambda,
                                                                                                  fennelLet,
                                                                                                  fennelList,
@@ -465,6 +612,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                  fennelMultiSymbol,
                                                                                                  fennelMultiSymbolMethod,
                                                                                                  fennelNil,
+                                                                                                 fennelNilSafe,
                                                                                                  fennelNumber,
                                                                                                  fennelQuote,
                                                                                                  fennelSequentialTable,
@@ -476,13 +624,16 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                  fennelVararg
                                                                                                }
                                                                              tmp[fennelLocal] = {
+                                                                                                  fennelAccumulate,
                                                                                                   fennelBinding,
                                                                                                   fennelBoolean,
+                                                                                                  fennelCollect,
                                                                                                   fennelEach,
                                                                                                   fennelFn,
                                                                                                   fennelFor,
                                                                                                   fennelGlobal,
                                                                                                   fennelHashfn,
+                                                                                                  fennelIcollect,
                                                                                                   fennelLambda,
                                                                                                   fennelLet,
                                                                                                   fennelList,
@@ -491,6 +642,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                   fennelMultiSymbol,
                                                                                                   fennelMultiValueBinding,
                                                                                                   fennelNil,
+                                                                                                  fennelNilSafe,
                                                                                                   fennelNumber,
                                                                                                   fennelQuote,
                                                                                                   fennelSequentialTable,
@@ -504,13 +656,16 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                   fennelVararg
                                                                                                 }
                                                                              tmp[fennelMatch] = {
+                                                                                                  fennelAccumulate,
                                                                                                   fennelBoolean,
+                                                                                                  fennelCollect,
                                                                                                   fennelEach,
                                                                                                   fennelFn,
                                                                                                   fennelFor,
                                                                                                   fennelGlobal,
                                                                                                   fennelGuardPattern,
                                                                                                   fennelHashfn,
+                                                                                                  fennelIcollect,
                                                                                                   fennelLambda,
                                                                                                   fennelLet,
                                                                                                   fennelList,
@@ -519,6 +674,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                   fennelMultiSymbol,
                                                                                                   fennelMultiValuePattern,
                                                                                                   fennelNil,
+                                                                                                  fennelNilSafe,
                                                                                                   fennelNumber,
                                                                                                   fennelQuote,
                                                                                                   fennelSequentialTable,
@@ -540,6 +696,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                               fennelBoolean,
                                                                                                               fennelMultiSymbol,
                                                                                                               fennelNil,
+                                                                                                              fennelNilSafe,
                                                                                                               fennelNumber,
                                                                                                               fennelSequentialTablePattern,
                                                                                                               fennelString,
@@ -549,12 +706,15 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                             }
                                                                              tmp[fennelParameters] = {fennelBinding, fennelMultiValueBinding, fennelSequentialTableBinding, fennelTableBinding, fennelVararg}
                                                                              tmp[fennelProgram] = {
+                                                                                                    fennelAccumulate,
                                                                                                     fennelBoolean,
+                                                                                                    fennelCollect,
                                                                                                     fennelEach,
                                                                                                     fennelFn,
                                                                                                     fennelFor,
                                                                                                     fennelGlobal,
                                                                                                     fennelHashfn,
+                                                                                                    fennelIcollect,
                                                                                                     fennelLambda,
                                                                                                     fennelLet,
                                                                                                     fennelList,
@@ -562,6 +722,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                     fennelMatch,
                                                                                                     fennelMultiSymbol,
                                                                                                     fennelNil,
+                                                                                                    fennelNilSafe,
                                                                                                     fennelNumber,
                                                                                                     fennelQuote,
                                                                                                     fennelSequentialTable,
@@ -577,6 +738,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                   fennelMultiSymbol,
                                                                                                   fennelMultiSymbolMethod,
                                                                                                   fennelNil,
+                                                                                                  fennelNilSafe,
                                                                                                   fennelNumber,
                                                                                                   fennelQuotedList,
                                                                                                   fennelQuotedSequentialTable,
@@ -591,6 +753,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                        fennelMultiSymbol,
                                                                                                        fennelMultiSymbolMethod,
                                                                                                        fennelNil,
+                                                                                                       fennelNilSafe,
                                                                                                        fennelNumber,
                                                                                                        fennelQuotedList,
                                                                                                        fennelQuotedSequentialTable,
@@ -605,6 +768,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                                   fennelMultiSymbol,
                                                                                                                   fennelMultiSymbolMethod,
                                                                                                                   fennelNil,
+                                                                                                                  fennelNilSafe,
                                                                                                                   fennelNumber,
                                                                                                                   fennelQuotedList,
                                                                                                                   fennelQuotedSequentialTable,
@@ -619,6 +783,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                         fennelMultiSymbol,
                                                                                                         fennelMultiSymbolMethod,
                                                                                                         fennelNil,
+                                                                                                        fennelNilSafe,
                                                                                                         fennelNumber,
                                                                                                         fennelQuotedList,
                                                                                                         fennelQuotedSequentialTable,
@@ -629,12 +794,15 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                         fennelVararg
                                                                                                       }
                                                                              tmp[fennelSequentialTable] = {
+                                                                                                            fennelAccumulate,
                                                                                                             fennelBoolean,
+                                                                                                            fennelCollect,
                                                                                                             fennelEach,
                                                                                                             fennelFn,
                                                                                                             fennelFor,
                                                                                                             fennelGlobal,
                                                                                                             fennelHashfn,
+                                                                                                            fennelIcollect,
                                                                                                             fennelLambda,
                                                                                                             fennelLet,
                                                                                                             fennelList,
@@ -642,6 +810,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                             fennelMatch,
                                                                                                             fennelMultiSymbol,
                                                                                                             fennelNil,
+                                                                                                            fennelNilSafe,
                                                                                                             fennelNumber,
                                                                                                             fennelQuote,
                                                                                                             fennelSequentialTable,
@@ -658,6 +827,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                                    fennelBoolean,
                                                                                                                    fennelMultiSymbol,
                                                                                                                    fennelNil,
+                                                                                                                   fennelNilSafe,
                                                                                                                    fennelNumber,
                                                                                                                    fennelSequentialTablePattern,
                                                                                                                    fennelString,
@@ -666,13 +836,16 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                                    fennelVararg
                                                                                                                  }
                                                                              tmp[fennelSet] = {
+                                                                                                fennelAccumulate,
                                                                                                 fennelAssignment,
                                                                                                 fennelBoolean,
+                                                                                                fennelCollect,
                                                                                                 fennelEach,
                                                                                                 fennelFn,
                                                                                                 fennelFor,
                                                                                                 fennelGlobal,
                                                                                                 fennelHashfn,
+                                                                                                fennelIcollect,
                                                                                                 fennelLambda,
                                                                                                 fennelLet,
                                                                                                 fennelList,
@@ -681,6 +854,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                 fennelMultiSymbol,
                                                                                                 fennelMultiValueAssignment,
                                                                                                 fennelNil,
+                                                                                                fennelNilSafe,
                                                                                                 fennelNumber,
                                                                                                 fennelQuote,
                                                                                                 fennelSequentialTable,
@@ -694,38 +868,18 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                 fennelVararg
                                                                                               }
                                                                              tmp[fennelString] = {fennelEscapeSequence}
-                                                                             tmp[fennelTable] = {
-                                                                                                  fennelBoolean,
-                                                                                                  fennelEach,
-                                                                                                  fennelFn,
-                                                                                                  fennelFor,
-                                                                                                  fennelGlobal,
-                                                                                                  fennelHashfn,
-                                                                                                  fennelLambda,
-                                                                                                  fennelLet,
-                                                                                                  fennelList,
-                                                                                                  fennelLocal,
-                                                                                                  fennelMatch,
-                                                                                                  fennelMultiSymbol,
-                                                                                                  fennelNil,
-                                                                                                  fennelNumber,
-                                                                                                  fennelQuote,
-                                                                                                  fennelSequentialTable,
-                                                                                                  fennelSet,
-                                                                                                  fennelString,
-                                                                                                  fennelSymbol,
-                                                                                                  fennelTable,
-                                                                                                  fennelVar,
-                                                                                                  fennelVararg
-                                                                                                }
+                                                                             tmp[fennelTable] = {fennelTablePair}
                                                                              tmp[fennelTableAssignment] = {
+                                                                                                            fennelAccumulate,
                                                                                                             fennelAssignment,
                                                                                                             fennelBoolean,
+                                                                                                            fennelCollect,
                                                                                                             fennelEach,
                                                                                                             fennelFn,
                                                                                                             fennelFor,
                                                                                                             fennelGlobal,
                                                                                                             fennelHashfn,
+                                                                                                            fennelIcollect,
                                                                                                             fennelLambda,
                                                                                                             fennelLet,
                                                                                                             fennelList,
@@ -733,6 +887,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                             fennelMatch,
                                                                                                             fennelMultiSymbol,
                                                                                                             fennelNil,
+                                                                                                            fennelNilSafe,
                                                                                                             fennelNumber,
                                                                                                             fennelQuote,
                                                                                                             fennelSequentialTable,
@@ -746,13 +901,16 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                             fennelVararg
                                                                                                           }
                                                                              tmp[fennelTableBinding] = {
+                                                                                                         fennelAccumulate,
                                                                                                          fennelBinding,
                                                                                                          fennelBoolean,
+                                                                                                         fennelCollect,
                                                                                                          fennelEach,
                                                                                                          fennelFn,
                                                                                                          fennelFor,
                                                                                                          fennelGlobal,
                                                                                                          fennelHashfn,
+                                                                                                         fennelIcollect,
                                                                                                          fennelLambda,
                                                                                                          fennelLet,
                                                                                                          fennelList,
@@ -760,6 +918,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                          fennelMatch,
                                                                                                          fennelMultiSymbol,
                                                                                                          fennelNil,
+                                                                                                         fennelNilSafe,
                                                                                                          fennelNumber,
                                                                                                          fennelQuote,
                                                                                                          fennelSequentialTable,
@@ -772,13 +931,17 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                          fennelVar,
                                                                                                          fennelVararg
                                                                                                        }
+                                                                             tmp[fennelTablePair] = {fennelBinding}
                                                                              tmp[fennelTablePattern] = {
+                                                                                                         fennelAccumulate,
                                                                                                          fennelBoolean,
+                                                                                                         fennelCollect,
                                                                                                          fennelEach,
                                                                                                          fennelFn,
                                                                                                          fennelFor,
                                                                                                          fennelGlobal,
                                                                                                          fennelHashfn,
+                                                                                                         fennelIcollect,
                                                                                                          fennelLambda,
                                                                                                          fennelLet,
                                                                                                          fennelList,
@@ -787,6 +950,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                          fennelMultiSymbol,
                                                                                                          fennelMultiValuePattern,
                                                                                                          fennelNil,
+                                                                                                         fennelNilSafe,
                                                                                                          fennelNumber,
                                                                                                          fennelQuote,
                                                                                                          fennelSequentialTable,
@@ -800,12 +964,15 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                          fennelVararg
                                                                                                        }
                                                                              tmp[fennelUnquote] = {
+                                                                                                    fennelAccumulate,
                                                                                                     fennelBoolean,
+                                                                                                    fennelCollect,
                                                                                                     fennelEach,
                                                                                                     fennelFn,
                                                                                                     fennelFor,
                                                                                                     fennelGlobal,
                                                                                                     fennelHashfn,
+                                                                                                    fennelIcollect,
                                                                                                     fennelLambda,
                                                                                                     fennelLet,
                                                                                                     fennelList,
@@ -813,6 +980,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                     fennelMatch,
                                                                                                     fennelMultiSymbol,
                                                                                                     fennelNil,
+                                                                                                    fennelNilSafe,
                                                                                                     fennelNumber,
                                                                                                     fennelQuote,
                                                                                                     fennelSequentialTable,
@@ -824,13 +992,16 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                     fennelVararg
                                                                                                   }
                                                                              tmp[fennelVar] = {
+                                                                                                fennelAccumulate,
                                                                                                 fennelBinding,
                                                                                                 fennelBoolean,
+                                                                                                fennelCollect,
                                                                                                 fennelEach,
                                                                                                 fennelFn,
                                                                                                 fennelFor,
                                                                                                 fennelGlobal,
                                                                                                 fennelHashfn,
+                                                                                                fennelIcollect,
                                                                                                 fennelLambda,
                                                                                                 fennelLet,
                                                                                                 fennelList,
@@ -839,6 +1010,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                 fennelMultiSymbol,
                                                                                                 fennelMultiValueBinding,
                                                                                                 fennelNil,
+                                                                                                fennelNilSafe,
                                                                                                 fennelNumber,
                                                                                                 fennelQuote,
                                                                                                 fennelSequentialTable,
@@ -856,6 +1028,7 @@ const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block
                                                                                                          fennelMultiSymbol,
                                                                                                          fennelMultiValuePattern,
                                                                                                          fennelNil,
+                                                                                                         fennelNilSafe,
                                                                                                          fennelNumber,
                                                                                                          fennelSequentialTablePattern,
                                                                                                          fennelString,
@@ -880,12 +1053,15 @@ const fennelTokenKinds*: set[FennelNodeKind] = {
                                                  fennelLBrackTok,
                                                  fennelRBrackTok,
                                                  fennelBacktickTok,
+                                                 fennelAccumulateTok,
+                                                 fennelCollectTok,
                                                  fennelEachTok,
                                                  fennelFalseTok,
                                                  fennelFnTok,
                                                  fennelForTok,
                                                  fennelGlobalTok,
                                                  fennelHashfnTok,
+                                                 fennelIcollectTok,
                                                  fennelLambdaTok,
                                                  fennelLetTok,
                                                  fennelLocalTok,
@@ -921,17 +1097,20 @@ proc tsNodeType*(node: TsFennelNode): string
 proc kind*(node: TsFennelNode): FennelNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
+      of "accumulate":                  fennelAccumulate
       of "assignment":                  fennelAssignment
       of "binding":                     fennelBinding
       of "boolean":                     fennelBoolean
+      of "collect":                     fennelCollect
       of "each":                        fennelEach
-      of "each_clause":                 fennelEachClause
       of "fn":                          fennelFn
       of "for":                         fennelFor
       of "for_clause":                  fennelForClause
       of "global":                      fennelGlobal
       of "guard_pattern":               fennelGuardPattern
       of "hashfn":                      fennelHashfn
+      of "icollect":                    fennelIcollect
+      of "iter_bindings":               fennelIterBindings
       of "lambda":                      fennelLambda
       of "let":                         fennelLet
       of "let_clause":                  fennelLetClause
@@ -958,6 +1137,7 @@ proc kind*(node: TsFennelNode): FennelNodeKind {.noSideEffect.} =
       of "table":                       fennelTable
       of "table_assignment":            fennelTableAssignment
       of "table_binding":               fennelTableBinding
+      of "table_pair":                  fennelTablePair
       of "table_pattern":               fennelTablePattern
       of "unquote":                     fennelUnquote
       of "var":                         fennelVar
@@ -981,6 +1161,7 @@ proc kind*(node: TsFennelNode): FennelNodeKind {.noSideEffect.} =
       of "escape_sequence":             fennelEscapeSequence
       of "false":                       fennelFalseTok
       of "nil":                         fennelNil
+      of "nil_safe":                    fennelNilSafe
       of "number":                      fennelNumber
       of "or":                          fennelOrTok
       of "symbol":                      fennelSymbol
@@ -1077,11 +1258,13 @@ let fennelGrammar*: array[FennelNodeKind, HtsRule[FennelNodeKind]] = block:
 
                                                                        rules[fennelQuotedSequentialTable] = tsSeq[K](tsString[K]("["), tsRepeat[K](tsSymbol[K](fennelHidQuotedSexp)), tsString[K]("]"))
                                                                        rules[fennelFn] = tsSeq[K](tsString[K]("("), tsString[K]("fn"), tsSymbol[K](fennelHidFunctionBody), tsString[K](")"))
-                                                                       rules[fennelHidLiteral] = tsChoice[K](tsSymbol[K](fennelString), tsSymbol[K](fennelNumber), tsSymbol[K](fennelBoolean), tsSymbol[K](fennelVararg), tsSymbol[K](fennelNil))
+                                                                       rules[fennelHidLiteral] = tsChoice[K](tsSymbol[K](fennelString), tsSymbol[K](fennelNumber), tsSymbol[K](fennelBoolean), tsSymbol[K](fennelVararg), tsSymbol[K](fennelNil), tsSymbol[K](fennelNilSafe))
+                                                                       rules[fennelNilSafe] = tsString[K]("?.")
                                                                        rules[fennelForClause] = tsSeq[K](tsString[K]("["), tsSymbol[K](fennelSymbol), tsSymbol[K](fennelHidSexp), tsSymbol[K](fennelHidSexp), tsChoice[K](tsSymbol[K](fennelHidSexp), tsBlank[K]()), tsString[K]("]"))
                                                                        rules[fennelSymbol] = tsChoice[K](tsString[K](":"), tsSeq[K](tsString[K]("."), tsRegex[K]("[^(){}\\[\\]\"\'~;,@`\\s]*")), tsRegex[K]("[^#(){}\\[\\]\"\'~;,@`.:\\s][^(){}\\[\\]\"\'~;,@`.:\\s]*"))
                                                                        rules[fennelVar] = tsSeq[K](tsString[K]("("), tsString[K]("var"), tsSymbol[K](fennelHidBinding), tsSymbol[K](fennelHidSexp), tsString[K](")"))
                                                                        rules[fennelHidNonMultiValueAssignment] = tsChoice[K](tsSymbol[K](fennelAssignment), tsSymbol[K](fennelSequentialTableAssignment), tsSymbol[K](fennelTableAssignment))
+                                                                       rules[fennelCollect] = tsSeq[K](tsString[K]("("), tsString[K]("collect"), tsString[K]("["), tsSymbol[K](fennelIterBindings), tsString[K]("]"), tsRepeat[K](tsSymbol[K](fennelHidSexp)), tsString[K](")"))
                                                                        rules[fennelLocal] = tsSeq[K](tsString[K]("("), tsString[K]("local"), tsSymbol[K](fennelHidBinding), tsSymbol[K](fennelHidSexp), tsString[K](")"))
                                                                        rules[fennelHidAssignment] = tsChoice[K](tsSymbol[K](fennelMultiValueAssignment), tsSymbol[K](fennelHidNonMultiValueAssignment))
                                                                        rules[fennelWherePattern] = tsSeq[K](tsString[K]("("), tsString[K]("where"), tsChoice[K](tsSymbol[K](fennelHidSimplePattern), tsSeq[K](tsString[K]("("), tsString[K]("or"), tsRepeat[K](tsSymbol[K](fennelHidSimplePattern)), tsString[K](")"))), tsRepeat[K](tsSymbol[K](fennelHidSexp)), tsString[K](")"))
@@ -1089,25 +1272,26 @@ let fennelGrammar*: array[FennelNodeKind, HtsRule[FennelNodeKind]] = block:
                                                                        rules[fennelMultiSymbol] = tsSeq[K](tsSymbol[K](fennelSymbol), tsRepeat1[K](tsSeq[K](tsString[K]("."), tsSymbol[K](fennelSymbolImmediate))))
                                                                        rules[fennelMultiSymbolMethod] = tsSeq[K](tsChoice[K](tsSymbol[K](fennelSymbol), tsSymbol[K](fennelMultiSymbol)), tsString[K](":"), tsSymbol[K](fennelSymbolImmediate))
                                                                        rules[fennelString] = tsChoice[K](tsRegex[K](":[^(){}\\[\\]\"\'~;,@`\\s]+"), tsSeq[K](tsString[K]("\""), tsRepeat[K](tsChoice[K](tsRegex[K]("[^\"\\\\]+"), tsSymbol[K](fennelEscapeSequence))), tsString[K]("\"")))
-                                                                       rules[fennelHidSpecialForm] = tsChoice[K](tsSymbol[K](fennelFn), tsSymbol[K](fennelLambda), tsSymbol[K](fennelHashfn), tsSymbol[K](fennelMatch), tsSymbol[K](fennelLet), tsSymbol[K](fennelGlobal), tsSymbol[K](fennelLocal), tsSymbol[K](fennelVar), tsSymbol[K](fennelSet), tsSymbol[K](fennelEach), tsSymbol[K](fennelFor), tsSymbol[K](fennelQuote))
+                                                                       rules[fennelHidSpecialForm] = tsChoice[K](tsSymbol[K](fennelFn), tsSymbol[K](fennelLambda), tsSymbol[K](fennelHashfn), tsSymbol[K](fennelMatch), tsSymbol[K](fennelLet), tsSymbol[K](fennelGlobal), tsSymbol[K](fennelLocal), tsSymbol[K](fennelVar), tsSymbol[K](fennelSet), tsSymbol[K](fennelEach), tsSymbol[K](fennelCollect), tsSymbol[K](fennelIcollect), tsSymbol[K](fennelAccumulate), tsSymbol[K](fennelFor), tsSymbol[K](fennelQuote))
                                                                        rules[fennelBoolean] = tsChoice[K](tsString[K]("true"), tsString[K]("false"))
                                                                        rules[fennelHidQuotedSexp] = tsChoice[K](tsSymbol[K](fennelUnquote), tsSymbol[K](fennelSymbol), tsSymbol[K](fennelMultiSymbol), tsSymbol[K](fennelMultiSymbolMethod), tsSymbol[K](fennelQuotedList), tsSymbol[K](fennelQuotedSequentialTable), tsSymbol[K](fennelQuotedTable), tsSymbol[K](fennelHidLiteral))
                                                                        rules[fennelHashfn] = tsChoice[K](tsSeq[K](tsString[K]("("), tsString[K]("hashfn"), tsRepeat[K](tsSymbol[K](fennelHidSexp)), tsString[K](")")), tsSeq[K](tsString[K]("#"), tsSymbol[K](fennelHidSexp)))
                                                                        rules[fennelFor] = tsSeq[K](tsString[K]("("), tsString[K]("for"), tsSymbol[K](fennelForClause), tsRepeat[K](tsSymbol[K](fennelHidSexp)), tsString[K](")"))
                                                                        rules[fennelLet] = tsSeq[K](tsString[K]("("), tsString[K]("let"), tsSymbol[K](fennelLetClause), tsRepeat[K](tsSymbol[K](fennelHidSexp)), tsString[K](")"))
                                                                        rules[fennelVararg] = tsString[K]("...")
-                                                                       rules[fennelEach] = tsSeq[K](tsString[K]("("), tsString[K]("each"), tsSymbol[K](fennelEachClause), tsRepeat[K](tsSymbol[K](fennelHidSexp)), tsString[K](")"))
+                                                                       rules[fennelEach] = tsSeq[K](tsString[K]("("), tsString[K]("each"), tsString[K]("["), tsSymbol[K](fennelIterBindings), tsString[K]("]"), tsRepeat[K](tsSymbol[K](fennelHidSexp)), tsString[K](")"))
                                                                        rules[fennelEscapeSequence] = tsSeq[K](tsString[K]("\\"), tsChoice[K](tsRegex[K]("[^xu\\d]"), tsRegex[K]("\\d{1,3}"), tsRegex[K]("x[\\da-fA-F]{2}"), tsRegex[K]("u{[\\da-fA-F]+}")))
                                                                        rules[fennelBinding] = tsSymbol[K](fennelSymbol)
                                                                        rules[fennelGuardPattern] = tsSeq[K](tsString[K]("("), tsSymbol[K](fennelHidSimplePattern), tsString[K]("?"), tsRepeat1[K](tsSymbol[K](fennelHidSexp)), tsString[K](")"))
+                                                                       rules[fennelIterBindings] = tsSeq[K](tsRepeat[K](tsSymbol[K](fennelHidBinding)), tsSymbol[K](fennelHidSexp), tsChoice[K](tsSeq[K](tsString[K](":until"), tsSymbol[K](fennelHidSexp)), tsBlank[K]()))
                                                                        rules[fennelMultiValueBinding] = tsSeq[K](tsString[K]("("), tsRepeat[K](tsSymbol[K](fennelHidNonMultiValueBinding)), tsString[K](")"))
+                                                                       rules[fennelAccumulate] = tsSeq[K](tsString[K]("("), tsString[K]("accumulate"), tsString[K]("["), tsSymbol[K](fennelHidBinding), tsSymbol[K](fennelHidSexp), tsSymbol[K](fennelIterBindings), tsString[K]("]"), tsRepeat[K](tsSymbol[K](fennelHidSexp)), tsString[K](")"))
                                                                        rules[fennelHidSexp] = tsChoice[K](tsSymbol[K](fennelHidSpecialForm), tsSymbol[K](fennelSymbol), tsSymbol[K](fennelMultiSymbol), tsSymbol[K](fennelList), tsSymbol[K](fennelSequentialTable), tsSymbol[K](fennelTable), tsSymbol[K](fennelHidLiteral))
                                                                        rules[fennelComment] = tsSeq[K](tsString[K](";"), tsRegex[K](".*"))
                                                                        rules[fennelNil] = tsString[K]("nil")
-                                                                       rules[fennelEachClause] = tsSeq[K](tsString[K]("["), tsRepeat[K](tsSymbol[K](fennelHidBinding)), tsSymbol[K](fennelHidSexp), tsChoice[K](tsSeq[K](tsString[K](":until"), tsSymbol[K](fennelHidSexp)), tsBlank[K]()), tsString[K]("]"))
                                                                        rules[fennelTableBinding] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsChoice[K](tsSeq[K](tsString[K](":"), tsSymbol[K](fennelBinding)), tsSeq[K](tsString[K]("&as"), tsSymbol[K](fennelBinding)), tsSeq[K](tsSymbol[K](fennelHidSexp), tsSymbol[K](fennelHidNonMultiValueBinding)))), tsString[K]("}"))
-                                                                       rules[fennelSequentialTablePattern] = tsSeq[K](tsString[K]("["), tsRepeat[K](tsSymbol[K](fennelHidNonMultiValuePattern)), tsString[K]("]"))
                                                                        rules[fennelTablePattern] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsChoice[K](tsSeq[K](tsString[K](":"), tsSymbol[K](fennelHidSimplePattern)), tsSeq[K](tsSymbol[K](fennelHidSexp), tsSymbol[K](fennelHidNonMultiValuePattern)))), tsString[K]("}"))
+                                                                       rules[fennelSequentialTablePattern] = tsSeq[K](tsString[K]("["), tsRepeat[K](tsSymbol[K](fennelHidNonMultiValuePattern)), tsString[K]("]"))
                                                                        rules[fennelQuotedTable] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSymbol[K](fennelHidQuotedSexp)), tsString[K]("}"))
                                                                        rules[fennelParameters] = tsSeq[K](tsString[K]("["), tsRepeat[K](tsChoice[K](tsSymbol[K](fennelHidBinding), tsSymbol[K](fennelVararg))), tsString[K]("]"))
                                                                        rules[fennelNumber] = tsChoice[K](tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsChoice[K](tsRegex[K]("\\d[_\\d]*"), tsSeq[K](tsString[K]("."), tsRegex[K]("\\d[_\\d]*")), tsSeq[K](tsRegex[K]("\\d[_\\d]*"), tsString[K]("."), tsChoice[K](tsRegex[K]("\\d[_\\d]*"), tsBlank[K]()))), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsRegex[K]("\\d[_\\d]*")), tsBlank[K]())), tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsChoice[K](tsString[K]("0x"), tsString[K]("0X")), tsChoice[K](tsRegex[K]("[a-fA-F\\d][_a-fA-F\\d]*"), tsSeq[K](tsString[K]("."), tsRegex[K]("[a-fA-F\\d][_a-fA-F\\d]*")), tsSeq[K](tsRegex[K]("[a-fA-F\\d][_a-fA-F\\d]*"), tsString[K]("."), tsChoice[K](tsRegex[K]("[a-fA-F\\d][_a-fA-F\\d]*"), tsBlank[K]()))), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("p"), tsString[K]("P")), tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsRegex[K]("[a-fA-F\\d][_a-fA-F\\d]*")), tsBlank[K]())))
@@ -1116,7 +1300,8 @@ let fennelGrammar*: array[FennelNodeKind, HtsRule[FennelNodeKind]] = block:
                                                                        rules[fennelAssignment] = tsChoice[K](tsSymbol[K](fennelSymbol), tsSymbol[K](fennelMultiSymbol))
                                                                        rules[fennelHidPattern] = tsChoice[K](tsSymbol[K](fennelHidSimplePattern), tsSymbol[K](fennelWherePattern), tsSymbol[K](fennelGuardPattern))
                                                                        rules[fennelQuote] = tsChoice[K](tsSeq[K](tsString[K]("("), tsString[K]("quote"), tsSymbol[K](fennelHidQuotedSexp), tsString[K](")")), tsSeq[K](tsChoice[K](tsString[K]("\'"), tsString[K]("`")), tsSymbol[K](fennelHidQuotedSexp)))
-                                                                       rules[fennelTable] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsChoice[K](tsSeq[K](tsString[K](":"), tsChoice[K](tsSymbol[K](fennelSymbol), tsSymbol[K](fennelMultiSymbol))), tsSeq[K](tsSymbol[K](fennelHidSexp), tsSymbol[K](fennelHidSexp)))), tsString[K]("}"))
+                                                                       rules[fennelTablePair] = tsChoice[K](tsSeq[K](tsString[K](":"), tsSymbol[K](fennelBinding)), tsSeq[K](tsSymbol[K](fennelString), tsSymbol[K](fennelHidSexp)), tsSeq[K](tsChoice[K](tsSymbol[K](fennelSymbol), tsSymbol[K](fennelMultiSymbol)), tsSymbol[K](fennelHidSexp)))
+                                                                       rules[fennelTable] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSymbol[K](fennelTablePair)), tsString[K]("}"))
                                                                        rules[fennelMultiValuePattern] = tsSeq[K](tsString[K]("("), tsRepeat[K](tsSymbol[K](fennelHidNonMultiValuePattern)), tsString[K](")"))
                                                                        rules[fennelHidNonMultiValuePattern] = tsChoice[K](tsSymbol[K](fennelHidLiteral), tsSymbol[K](fennelSymbol), tsSymbol[K](fennelMultiSymbol), tsSymbol[K](fennelSequentialTablePattern), tsSymbol[K](fennelTablePattern))
                                                                        rules[fennelHidFunctionBody] = tsSeq[K](tsChoice[K](tsChoice[K](tsSymbol[K](fennelSymbol), tsSymbol[K](fennelMultiSymbol)), tsBlank[K]()), tsSymbol[K](fennelParameters), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](fennelString), tsBlank[K]()), tsRepeat1[K](tsSymbol[K](fennelHidSexp))), tsBlank[K]()))
@@ -1129,6 +1314,7 @@ let fennelGrammar*: array[FennelNodeKind, HtsRule[FennelNodeKind]] = block:
                                                                        rules[fennelSequentialTableBinding] = tsSeq[K](tsString[K]("["), tsRepeat[K](tsSymbol[K](fennelHidNonMultiValueBinding)), tsChoice[K](tsSeq[K](tsString[K]("&"), tsSymbol[K](fennelBinding)), tsBlank[K]()), tsString[K]("]"))
                                                                        rules[fennelSymbolImmediate] = tsChoice[K](tsString[K](":"), tsSeq[K](tsString[K]("."), tsRegex[K]("[^(){}\\[\\]\"\'~;,@`\\s]*")), tsRegex[K]("[^#(){}\\[\\]\"\'~;,@`.:\\s][^(){}\\[\\]\"\'~;,@`.:\\s]*"))
                                                                        rules[fennelTableAssignment] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsChoice[K](tsSeq[K](tsString[K](":"), tsSymbol[K](fennelAssignment)), tsSeq[K](tsSymbol[K](fennelHidSexp), tsSymbol[K](fennelHidNonMultiValueAssignment)))), tsString[K]("}"))
+                                                                       rules[fennelIcollect] = tsSeq[K](tsString[K]("("), tsString[K]("icollect"), tsString[K]("["), tsSymbol[K](fennelIterBindings), tsString[K]("]"), tsRepeat[K](tsSymbol[K](fennelHidSexp)), tsString[K](")"))
                                                                        rules[fennelGlobal] = tsSeq[K](tsString[K]("("), tsString[K]("global"), tsSymbol[K](fennelHidBinding), tsSymbol[K](fennelHidSexp), tsString[K](")"))
                                                                        rules[fennelHidNonMultiValueBinding] = tsChoice[K](tsSymbol[K](fennelBinding), tsSymbol[K](fennelSequentialTableBinding), tsSymbol[K](fennelTableBinding))
                                                                        rules[fennelList] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSymbol[K](fennelHidSexp), tsSymbol[K](fennelMultiSymbolMethod)), tsRepeat[K](tsSymbol[K](fennelHidSexp)), tsString[K](")"))
