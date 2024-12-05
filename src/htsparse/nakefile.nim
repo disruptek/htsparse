@@ -359,9 +359,9 @@ proc javascriptCompile*() =
 proc luaCompile*() =
   build(
     "lua",
-    Url("https://raw.githubusercontent.com/Azganoth/tree-sitter-lua/master/grammar.js"),
-    some Url("https://raw.githubusercontent.com/Azganoth/tree-sitter-lua/master/src/scanner.cc"),
-    scannerFile = RelFile("lua_scanner.cc")
+    Url("https://raw.githubusercontent.com/tree-sitter-grammars/tree-sitter-lua/master/grammar.js"),
+    some Url("https://raw.githubusercontent.com/tree-sitter-grammars/tree-sitter-lua/master/src/scanner.c")
+    # scannerFile = RelFile("lua_scanner.cc")
   )
 
 # Tree-sitter markdown parser will be added later - it uses ~10 separate files for scanners
@@ -666,11 +666,12 @@ when isMainModule:
   startHax()
   let root = cwd()
 
-  for err in [
-    "julia", "nix", "scala", "dart", "vhdl"
-  ]:
-    cd root
-    main(@[err])
+  when false:
+    for err in [
+      "julia", "nix", "scala", "dart", "vhdl"
+    ]:
+      cd root
+      main(@[err])
 
   # cd root
   # main(@["regex"])
@@ -683,5 +684,5 @@ when isMainModule:
 
   # main(@["kotlin"])
   # main(@["verilog"])
-  # main(paramStrs())
+  main(paramStrs())
   echo "all ok"
